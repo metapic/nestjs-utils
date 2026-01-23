@@ -1,0 +1,25 @@
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/typescript-node:24-bookworm
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+    volumes:
+      - node-modules:${containerWorkspaceFolder}/node_modules
+      - node-modules-example:${containerWorkspaceFolder}/example/node_modules
+      # Use cached mount for better performance on Mac
+      - ../..:/workspaces:cached
+
+  db:
+    image: docker.io/library/mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: metapic
+      MYSQL_USER: metapic
+      MYSQL_PASSWORD: metapic
+      MYSQL_DATABASE: example
+    tmpfs:
+      - /var/lib/mysql
+
+volumes:
+  node-modules:
+  node-modules-example:
