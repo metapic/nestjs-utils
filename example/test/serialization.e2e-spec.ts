@@ -1,41 +1,24 @@
-import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
-import { Test, type TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { type Repository } from 'typeorm'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import { AppModule } from '@/app.module'
+import { app, module } from './setup'
+
 import { Cat } from '@/cat.entity'
 
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const isoDateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/
 
-describe('Cats API', () => {
-  let module: TestingModule
-  let app: NestFastifyApplication
-
-  beforeAll(async () => {
-    module = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = module.createNestApplication<NestFastifyApplication>(new FastifyAdapter())
-
-    await app.init()
-    await app.getHttpAdapter().getInstance().ready()
-  })
-
-  afterAll(async () => {
-    if (app) {
-      await app.close()
-    }
-  })
-
+describe('Serialization', () => {
   beforeAll(async () => {
     await module.get<Repository<Cat>>(getRepositoryToken(Cat)).deleteAll()
   })
 
-  describe('serialisation and deserialization', () => {
+  afterAll(async () => {
+    await module.get<Repository<Cat>>(getRepositoryToken(Cat)).deleteAll()
+  })
+
+  describe('Cats API', () => {
     let createResponses: Awaited<ReturnType<typeof app.inject>>[]
     let catIds: {
       whiskers: string

@@ -1,32 +1,8 @@
-import { setupSwagger } from '@metapic/nestjs-utils/swagger'
-import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
-import { Test, type TestingModule } from '@nestjs/testing'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-import { AppModule } from '@/app.module'
+import { app } from './setup'
 
 describe('OpenAPI', () => {
-  let module: TestingModule
-  let app: NestFastifyApplication
-
-  beforeAll(async () => {
-    module = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = module.createNestApplication<NestFastifyApplication>(new FastifyAdapter())
-    setupSwagger(app)
-
-    await app.init()
-    await app.getHttpAdapter().getInstance().ready()
-  })
-
-  afterAll(async () => {
-    if (app) {
-      await app.close()
-    }
-  })
-
   it('should generate OpenAPI documentation using snake_case', async () => {
     const response = await app.inject({
       method: 'GET',

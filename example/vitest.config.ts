@@ -8,6 +8,8 @@ export default defineConfig({
     globals: true,
     root: './',
     include: ['**/*.spec.ts', '**/*.e2e-spec.ts'],
+    setupFiles: ['./test/setup.ts'],
+    fileParallelism: false,
   },
   plugins: [
     swc.vite({

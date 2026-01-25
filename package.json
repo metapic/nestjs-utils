@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
-    "./swagger": "./dist/swagger.js"
+    "./swagger": "./dist/swagger.js",
+    "./typeorm": "./dist/typeorm.js"
   },
   "files": [
     "dist/**/*"

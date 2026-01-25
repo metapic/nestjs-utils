@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, PrimaryBinaryUuidColumn } from '@metapic/nestjs-utils/typeorm'
+import { Entity } from 'typeorm'
 
 export enum Breed {
   BENGAL = 'bengal',
@@ -10,7 +11,7 @@ export enum Breed {
 
 @Entity()
 export class Cat {
-  @PrimaryColumn()
+  @PrimaryBinaryUuidColumn()
   id!: string
 
   @Column()
