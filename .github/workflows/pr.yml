@@ -41,6 +41,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Build
+        run: npm run build
+
       - name: Lint and test example
         env:
           DB_HOST: localhost
@@ -50,9 +53,6 @@ jobs:
           npm run lint
           npm run test
           popd
-
-      - name: Build
-        run: npm run build
 
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
