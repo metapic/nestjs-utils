@@ -8,11 +8,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    services:
+      db:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: metapic
+          MYSQL_USER: metapic
+          MYSQL_PASSWORD: metapic
+          MYSQL_DATABASE: example
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
     strategy:
       matrix:
         node-version: [20.x, 22.x, 24.x, 25.x]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -25,11 +38,21 @@ jobs:
       - name: Install dependencies
         run: npm clean-install
 
-      - name: Build
-        run: npm run build
-
       - name: Lint
         run: npm run lint
+
+      - name: Lint and test example
+        env:
+          DB_HOST: localhost
+        run: |
+          pushd example
+          npm clean-install
+          npm run lint
+          npm run test
+          popd
+
+      - name: Build
+        run: npm run build
 
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures

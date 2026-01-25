@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import { Test, type TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { type Repository } from 'typeorm'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import { AppModule } from './app.module'
-import { Cat } from './cat.entity'
+import { AppModule } from '@/app.module'
+import { Cat } from '@/cat.entity'
 
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const isoDateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/
@@ -77,13 +76,13 @@ describe('Cats API', () => {
     it('should create a cat with snake_case request and response payloads', () => {
       expect(createResponses[0].statusCode).toBe(201)
       expect(createResponses[0].json()).toEqual({
-        id: expect.stringMatching(uuidRegex),
+        id: expect.stringMatching(uuidRegex) as string,
         name: 'Whiskers',
         age: 3,
         breed: 'SIAMESE',
         is_vaccinated: true,
         magic_number: 99999,
-        created_at: expect.stringMatching(isoDateTimeRegex),
+        created_at: expect.stringMatching(isoDateTimeRegex) as string,
       })
     })
 
@@ -100,7 +99,7 @@ describe('Cats API', () => {
         breed: 'siamese',
         is_vaccinated: true,
         magic_number: 99999,
-        created_at: expect.stringMatching(isoDateTimeRegex),
+        created_at: expect.stringMatching(isoDateTimeRegex) as string,
       })
     })
 
@@ -119,7 +118,7 @@ describe('Cats API', () => {
             breed: 'birman',
             is_vaccinated: false,
             magic_number: 1,
-            created_at: expect.stringMatching(isoDateTimeRegex),
+            created_at: expect.stringMatching(isoDateTimeRegex) as string,
           },
           {
             id: catIds.whiskers,
@@ -128,7 +127,7 @@ describe('Cats API', () => {
             breed: 'siamese',
             is_vaccinated: true,
             magic_number: 99999,
-            created_at: expect.stringMatching(isoDateTimeRegex),
+            created_at: expect.stringMatching(isoDateTimeRegex) as string,
           },
         ],
         meta: {
@@ -157,7 +156,7 @@ describe('Cats API', () => {
             breed: 'birman',
             is_vaccinated: false,
             magic_number: 1,
-            created_at: expect.stringMatching(isoDateTimeRegex),
+            created_at: expect.stringMatching(isoDateTimeRegex) as string,
           },
         ],
         meta: {
@@ -184,7 +183,7 @@ describe('Cats API', () => {
             breed: 'siamese',
             is_vaccinated: true,
             magic_number: 99999,
-            created_at: expect.stringMatching(isoDateTimeRegex),
+            created_at: expect.stringMatching(isoDateTimeRegex) as string,
           },
         ],
         meta: {
@@ -213,7 +212,7 @@ describe('Cats API', () => {
             breed: 'birman',
             is_vaccinated: false,
             magic_number: 1,
-            created_at: expect.stringMatching(isoDateTimeRegex),
+            created_at: expect.stringMatching(isoDateTimeRegex) as string,
           },
         ],
         meta: {

@@ -11,23 +11,23 @@ export enum Breed {
 @Entity()
 export class Cat {
   @PrimaryColumn()
-  id: string
+  id!: string
 
   @Column()
-  name: string
+  name!: string
 
   @Column({ type: 'int' })
-  age: number
+  age!: number
 
   @Column({ type: 'boolean' })
-  isVaccinated: boolean
+  isVaccinated!: boolean
 
   @Column({ type: 'enum', enum: Breed })
-  breed: Breed
+  breed!: Breed
 
   @Column({ type: 'int' })
-  magicNumber: number
+  magicNumber!: number
 
   @Column({ type: 'timestamp' })
-  createdAt: Date
+  createdAt!: Date
 }

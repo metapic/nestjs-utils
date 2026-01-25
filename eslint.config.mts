@@ -3,7 +3,11 @@ import { defineConfig } from 'eslint/config'
 import globals from 'globals'
 
 export default defineConfig({
-  extends: [metapic.configs.recommended],
+  extends: [
+    metapic.configs.customize({
+      extraIgnores: ['example/'],
+    }),
+  ],
   languageOptions: {
     globals: {
       ...globals.node,

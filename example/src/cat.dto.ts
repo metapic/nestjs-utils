@@ -18,13 +18,13 @@ export class GetCatsParams extends PaginatedParams {
 
 export class CreateCatRequest {
   @ExposeApiProperty()
-  name: string
+  name!: string
 
   @ExposeApiProperty()
-  age: number
+  age!: number
 
   @ExposeApiProperty({ enum: Breed })
-  breed: Breed
+  breed!: Breed
 
   @ExposeApiProperty({ required: false, default: false })
   isVaccinated?: boolean = false
@@ -35,25 +35,25 @@ export class CreateCatRequest {
 
 export class CatDto {
   @ExposeApiProperty({ format: 'uuid' })
-  id: string
+  id!: string
 
   @ExposeApiProperty()
-  name: string
+  name!: string
 
   @ExposeApiProperty()
-  age: number
+  age!: number
 
   @ExposeApiProperty({ enum: Breed })
-  breed: Breed
+  breed!: Breed
 
   @ExposeApiProperty()
-  isVaccinated: boolean
+  isVaccinated!: boolean
 
   @ExposeApiProperty()
-  magicNumber: number
+  magicNumber!: number
 
   @ExposeApiProperty()
-  createdAt: Date
+  createdAt!: Date
 
   static fromEntity(cat: Cat): CatDto {
     const dto = new CatDto()

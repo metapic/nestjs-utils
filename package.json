@@ -3,7 +3,10 @@
   "version": "0.0.0-development",
   "description": "Utilities and helpers for Nest.js + TypeORM.",
   "type": "module",
-  "exports": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./swagger": "./dist/swagger.js"
+  },
   "files": [
     "dist/**/*"
   ],
@@ -52,7 +55,7 @@
     "nestjs-typeorm-paginate": ">=4"
   },
   "devDependencies": {
-    "@metapic/eslint-config": "^1.0.10",
+    "@metapic/eslint-config": "^1.0.12",
     "@metapic/prettier-config": "^1.0.3",
     "@nestjs/common": "^11.1.12",
     "@nestjs/core": "^11.1.12",

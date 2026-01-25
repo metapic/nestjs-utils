@@ -1,10 +1,9 @@
 {
   "name": "@metapic/nestjs-utils-example",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "An example Nest.js application for the @metapic/nestjs-utils package.",
   "author": "",
   "private": true,
-  "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
     "start": "nest start",
@@ -35,7 +34,7 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@metapic/eslint-config": "^1.0.10",
+    "@metapic/eslint-config": "^1.0.12",
     "@metapic/prettier-config": "^1.0.3",
     "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^11.0.9",

@@ -8,7 +8,7 @@ import { CatsModule } from './cats.module'
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'db',
+      host: process.env.DB_HOST ?? 'db',
       port: 3306,
       username: 'metapic',
       password: 'metapic',
