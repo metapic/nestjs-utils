@@ -1,3 +1,4 @@
+import { UUID_VALUE_TRANSFORMER } from '@metapic/nestjs-utils/typeorm'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { DataSource, type Repository } from 'typeorm'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
@@ -49,19 +50,18 @@ describe('TypeORM', () => {
     ])
   })
 
-  // todo: query by uuid not working
-  it.skip('should use snake_case as column names', async () => {
+  it('should be able to query by binary uuid', async () => {
     const dataSource = module.get(DataSource)
-    const result = await dataSource.query<unknown>(
+    const result = await dataSource.query<unknown[]>(
       `SELECT id, name, age, breed, is_vaccinated, magic_number
        FROM cat
        WHERE id = ?`,
-      [id],
+      [UUID_VALUE_TRANSFORMER.to(id)],
     )
 
     expect(result).toMatchObject([
       {
-        id: id,
+        id: UUID_VALUE_TRANSFORMER.to(id),
         name: 'Whiskers',
         age: 3,
         breed: 'siamese',

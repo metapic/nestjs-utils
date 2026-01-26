@@ -26,7 +26,7 @@ export const PrimaryBinaryUuidColumn = (): ReturnType<typeof PrimaryColumn> =>
   })
 
 export const BinaryUuidColumn = (
-  options: Omit<ColumnOptions, 'type' | 'length' | 'generated' | 'transformer'>,
+  options?: Omit<ColumnOptions, 'type' | 'length' | 'generated' | 'transformer'>,
 ): ReturnType<typeof Column> =>
   Column({
     type: 'binary',
@@ -65,4 +65,4 @@ class UuidValueTransformer implements ValueTransformer {
   }
 }
 
-const UUID_VALUE_TRANSFORMER = new UuidValueTransformer()
+export const UUID_VALUE_TRANSFORMER = new UuidValueTransformer()

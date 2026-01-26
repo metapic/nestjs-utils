@@ -51,17 +51,19 @@ describe('OpenAPI', () => {
                 content: {
                   'application/json': {
                     schema: {
-                      allOf: [
-                        { $ref: '#/components/schemas/Paginated' },
-                        {
-                          properties: {
-                            items: {
-                              type: 'array',
-                              items: { $ref: '#/components/schemas/CatDto' },
-                            },
-                          },
+                      properties: {
+                        items: {
+                          type: 'array',
+                          items: { $ref: '#/components/schemas/CatDto' },
                         },
-                      ],
+                        links: {
+                          $ref: '#/components/schemas/PaginationLinks',
+                        },
+                        meta: {
+                          $ref: '#/components/schemas/PaginationMeta',
+                        },
+                      },
+                      required: ['items', 'meta', 'links'],
                     },
                   },
                 },
@@ -92,7 +94,14 @@ describe('OpenAPI', () => {
         '/cats/{id}': {
           get: {
             operationId: 'GetCat',
-            parameters: [],
+            parameters: [
+              {
+                name: 'id',
+                required: true,
+                in: 'path',
+                schema: { type: 'string' },
+              },
+            ],
             responses: {
               '200': {
                 description: '',

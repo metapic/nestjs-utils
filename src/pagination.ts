@@ -87,17 +87,15 @@ export const ApiPaginatedResponse = (
       status: 200,
       ...restOptions,
       schema: {
-        allOf: [
-          { $ref: getSchemaPath(Paginated) },
-          {
-            properties: {
-              items: {
-                type: 'array',
-                items: { $ref: getSchemaPath(type) },
-              },
-            },
+        required: ['items', 'meta', 'links'],
+        properties: {
+          items: {
+            type: 'array',
+            items: { $ref: getSchemaPath(type) },
           },
-        ],
+          meta: { $ref: getSchemaPath(PaginationMeta) },
+          links: { $ref: getSchemaPath(PaginationLinks) },
+        },
       },
     }),
   )
