@@ -1,4 +1,4 @@
-import { setupSwagger } from '@metapic/nestjs-utils/swagger'
+import { setupSwagger } from '@metapic/nestjs-utils'
 import { NestFactory } from '@nestjs/core'
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import { type DocumentBuilder } from '@nestjs/swagger'

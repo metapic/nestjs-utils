@@ -1,4 +1,4 @@
-import { setupSwagger } from '@metapic/nestjs-utils/swagger'
+import { setupSwagger } from '@metapic/nestjs-utils'
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import { Test, type TestingModule } from '@nestjs/testing'
 import { afterAll, beforeAll } from 'vitest'

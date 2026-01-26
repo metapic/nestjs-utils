@@ -20,7 +20,7 @@ export const PrimaryBinaryUuidColumn = (): ReturnType<typeof PrimaryColumn> =>
     type: 'binary',
     length: 16,
     generated: false,
-    transformer: uuidValueTransformer,
+    transformer: UUID_VALUE_TRANSFORMER,
     // Since MySQL cannot generate UUIDv7 natively, we disable automatic generation here.
     // default: () => 'UUID_TO_BIN(UUID())',
   })
@@ -32,7 +32,7 @@ export const BinaryUuidColumn = (
     type: 'binary',
     length: 16,
     generated: false,
-    transformer: uuidValueTransformer,
+    transformer: UUID_VALUE_TRANSFORMER,
     ...options,
   })
 
@@ -65,4 +65,4 @@ class UuidValueTransformer implements ValueTransformer {
   }
 }
 
-const uuidValueTransformer = new UuidValueTransformer()
+const UUID_VALUE_TRANSFORMER = new UuidValueTransformer()

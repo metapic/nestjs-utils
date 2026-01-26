@@ -1,5 +1,5 @@
-import { ClassSerializerInterceptor, HttpStatus, Module, ValidationPipe } from '@nestjs/common'
-import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core'
+import { SERIALIZATION_INTERCEPTOR, VALIDATION_PIPE } from '@metapic/nestjs-utils'
+import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { CatsModule } from './cats.module'
@@ -19,19 +19,6 @@ import { CatsModule } from './cats.module'
     }),
     CatsModule,
   ],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ClassSerializerInterceptor,
-    },
-    {
-      provide: APP_PIPE,
-      useValue: new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      }),
-    },
-  ],
+  providers: [SERIALIZATION_INTERCEPTOR, VALIDATION_PIPE],
 })
 export class AppModule {}
