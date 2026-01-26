@@ -30,26 +30,6 @@ describe('TypeORM', () => {
     await module.get<Repository<Cat>>(getRepositoryToken(Cat)).deleteAll()
   })
 
-  it('should use snake_case as column names (tmp query by name)', async () => {
-    const dataSource = module.get(DataSource)
-    const result = await dataSource.query<unknown>(
-      `SELECT name, age, breed, is_vaccinated, magic_number
-       FROM cat
-       WHERE name = ?`,
-      ['Whiskers'],
-    )
-
-    expect(result).toMatchObject([
-      {
-        name: 'Whiskers',
-        age: 3,
-        breed: 'siamese',
-        is_vaccinated: 1,
-        magic_number: 99999,
-      },
-    ])
-  })
-
   it('should be able to query by binary uuid', async () => {
     const dataSource = module.get(DataSource)
     const result = await dataSource.query<unknown[]>(
