@@ -1,6 +1,12 @@
 import { snakeCase } from 'change-case'
 import * as typeorm from 'typeorm'
-import { type ColumnOptions, type PrimaryColumnOptions, type ValueTransformer } from 'typeorm'
+import {
+  type ColumnOptions,
+  type FindOperator,
+  InstanceChecker,
+  type PrimaryColumnOptions,
+  type ValueTransformer,
+} from 'typeorm'
 import { parse, stringify, validate } from 'uuid'
 
 export const Column = (options?: ColumnOptions) => {
@@ -41,11 +47,19 @@ export const BinaryUuidColumn = (
  * More details: https://github.com/typeorm/typeorm/issues/10542
  */
 class UuidValueTransformer implements ValueTransformer {
-  public to(uuid: string | undefined | null): Buffer | null {
-    if (!uuid) {
+  public to(
+    value: string | undefined | null | FindOperator<unknown>,
+  ): Buffer | FindOperator<unknown> | null {
+    if (!value) {
       return null
     }
-    return Buffer.from(parse(uuid))
+
+    if (InstanceChecker.isFindOperator(value)) {
+      // Pass through FindOperators (e.g. IsNull()) without transforming
+      return value
+    }
+
+    return Buffer.from(parse(value))
   }
 
   public from(bin: Buffer | undefined | null): string | null {
