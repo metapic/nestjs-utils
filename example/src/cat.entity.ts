@@ -1,4 +1,4 @@
-import { Column, PrimaryBinaryUuidColumn } from '@metapic/nestjs-utils/typeorm'
+import { BinaryUuidColumn, Column, PrimaryBinaryUuidColumn } from '@metapic/nestjs-utils/typeorm'
 import { Entity } from 'typeorm'
 
 export enum Breed {
@@ -31,4 +31,11 @@ export class Cat {
 
   @Column({ type: 'timestamp' })
   createdAt!: Date
+
+  @BinaryUuidColumn({ nullable: true })
+  parentId?: string | null
+
+  constructor(partial?: Partial<Cat>) {
+    Object.assign(this, partial)
+  }
 }
