@@ -1,5 +1,5 @@
 import { ApiPaginatedResponse, Paginated, toPaginatedResponse } from '@metapic/nestjs-utils'
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Query, SerializeOptions } from '@nestjs/common'
 import { ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse } from '@nestjs/swagger'
 import { InjectRepository } from '@nestjs/typeorm'
 import { MoreThan, Repository } from 'typeorm'
@@ -40,6 +40,15 @@ export class CatsController {
   @ApiOkResponse({ type: CatDto })
   @ApiNotFoundResponse({ description: 'Cat not found' })
   async getCat(@Param('id') id: string): Promise<CatDto> {
+    const cat = await this.repository.findOneByOrFail({ id })
+    return CatDto.fromEntity(cat)
+  }
+
+  @Get(':id/with-private')
+  @ApiOkResponse({ type: CatDto })
+  @ApiNotFoundResponse({ description: 'Cat not found' })
+  @SerializeOptions({ groups: ['private'] })
+  async getCatPrivate(@Param('id') id: string): Promise<CatDto> {
     const cat = await this.repository.findOneByOrFail({ id })
     return CatDto.fromEntity(cat)
   }
