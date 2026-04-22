@@ -61,7 +61,6 @@ describe('Serialization', () => {
       expect(createResponses[0].json()).toEqual({
         id: expect.stringMatching(uuidRegex) as string,
         name: 'Whiskers',
-        age: 3,
         breed: 'SIAMESE',
         is_vaccinated: true,
         magic_number: 99999,
@@ -73,6 +72,22 @@ describe('Serialization', () => {
       const response = await app.inject({
         method: 'GET',
         url: `/cats/${catIds.whiskers}`,
+      })
+      expect(response.statusCode).toBe(200)
+      expect(response.json()).toEqual({
+        id: catIds.whiskers,
+        name: 'Whiskers',
+        breed: 'siamese',
+        is_vaccinated: true,
+        magic_number: 99999,
+        created_at: expect.stringMatching(isoDateTimeRegex) as string,
+      })
+    })
+
+    it('should get a cat serialized with a different group', async () => {
+      const response = await app.inject({
+        method: 'GET',
+        url: `/cats/${catIds.whiskers}/with-private`,
       })
       expect(response.statusCode).toBe(200)
       expect(response.json()).toEqual({
@@ -97,7 +112,6 @@ describe('Serialization', () => {
           {
             id: catIds.fluffy,
             name: 'Fluffy',
-            age: 8,
             breed: 'birman',
             is_vaccinated: false,
             magic_number: 1,
@@ -106,7 +120,6 @@ describe('Serialization', () => {
           {
             id: catIds.whiskers,
             name: 'Whiskers',
-            age: 3,
             breed: 'siamese',
             is_vaccinated: true,
             magic_number: 99999,
@@ -135,7 +148,6 @@ describe('Serialization', () => {
           {
             id: catIds.fluffy,
             name: 'Fluffy',
-            age: 8,
             breed: 'birman',
             is_vaccinated: false,
             magic_number: 1,
@@ -162,7 +174,6 @@ describe('Serialization', () => {
           {
             id: catIds.whiskers,
             name: 'Whiskers',
-            age: 3,
             breed: 'siamese',
             is_vaccinated: true,
             magic_number: 99999,
@@ -191,7 +202,6 @@ describe('Serialization', () => {
           {
             id: catIds.fluffy,
             name: 'Fluffy',
-            age: 8,
             breed: 'birman',
             is_vaccinated: false,
             magic_number: 1,

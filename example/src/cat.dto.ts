@@ -40,8 +40,12 @@ export class CatDto {
   @ExposeApiProperty()
   name!: string
 
-  @ExposeApiProperty()
-  age!: number
+  @ExposeApiProperty({
+    expose: {
+      groups: ['private'],
+    },
+  })
+  age?: number
 
   @ExposeApiProperty({ enum: Breed })
   breed!: Breed
