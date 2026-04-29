@@ -8,22 +8,24 @@ export const TransformEmptyString = (defaultValue?: string): PropertyDecorator =
     Transform(({ value }): string | undefined => (value && value != '' ? value : defaultValue)),
   )
 
-type ModifiableExposeOptions = Omit<ExposeOptions, 'name' | 'toClassOnly' | 'toPlainOnly'>
-
 /**
  * Expose a property with snake_case naming in the API documentation and during serialization.
  *
  * @see Expose
  * @see ApiProperty
  */
-export const ExposeApiProperty = (
-  options?: ApiPropertyOptions & { expose?: ModifiableExposeOptions },
-): PropertyDecorator => {
+export const ExposeApiProperty = (options?: {
+  name?: string
+  expose?: Omit<ExposeOptions, 'name'>
+  apiProperty?: Omit<ApiPropertyOptions, 'name'>
+}): PropertyDecorator => {
   return (target: object, propertyKey: string | symbol) => {
-    const { expose, ...otherOptions } = options ?? {}
-    Expose({ ...(expose ?? {}), name: options?.name, toClassOnly: true })(target, propertyKey)
-    ExposeSnakeCase({ ...(expose ?? {}), toPlainOnly: true })(target, propertyKey)
-    ApiPropertySnakeCase(otherOptions)(target, propertyKey)
+    const { name, expose, apiProperty } = options ?? {}
+    ExposeSnakeCase({ ...(expose ?? {}), name, toPlainOnly: true })(target, propertyKey)
+    ApiPropertySnakeCase({ ...(apiProperty ?? {}), name } as ApiPropertyOptions)(
+      target,
+      propertyKey,
+    )
   }
 }
 

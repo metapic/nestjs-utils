@@ -4,14 +4,18 @@ import { Breed, Cat } from './cat.entity'
 
 export class GetCatsParams extends PaginatedParams {
   @ExposeApiProperty({
-    required: false,
-    description: 'Filter cats with age greater than the specified value',
+    apiProperty: {
+      required: false,
+      description: 'Filter cats with age greater than the specified value',
+    },
   })
   ageGreaterThan?: number
 
   @ExposeApiProperty({
-    required: false,
-    description: 'Filter cats by vaccination status',
+    apiProperty: {
+      required: false,
+      description: 'Filter cats by vaccination status',
+    },
   })
   isVaccinated?: boolean
 }
@@ -23,10 +27,10 @@ export class CreateCatRequest {
   @ExposeApiProperty()
   age!: number
 
-  @ExposeApiProperty({ enum: Breed })
+  @ExposeApiProperty({ apiProperty: { enum: Breed } })
   breed!: Breed
 
-  @ExposeApiProperty({ required: false, default: false })
+  @ExposeApiProperty({ apiProperty: { required: false, default: false } })
   isVaccinated?: boolean = false
 
   @ExposeApiProperty()
@@ -34,7 +38,7 @@ export class CreateCatRequest {
 }
 
 export class CatDto {
-  @ExposeApiProperty({ format: 'uuid' })
+  @ExposeApiProperty({ apiProperty: { format: 'uuid' } })
   id!: string
 
   @ExposeApiProperty()
@@ -47,7 +51,7 @@ export class CatDto {
   })
   age?: number
 
-  @ExposeApiProperty({ enum: Breed })
+  @ExposeApiProperty({ apiProperty: { enum: Breed } })
   breed!: Breed
 
   @ExposeApiProperty()
@@ -58,6 +62,9 @@ export class CatDto {
 
   @ExposeApiProperty()
   createdAt!: Date
+
+  @ExposeApiProperty({ name: 'legacy_name_still_in_use', apiProperty: { type: 'string' } })
+  correctName = 'Garfield'
 
   static fromEntity(cat: Cat): CatDto {
     const dto = new CatDto()

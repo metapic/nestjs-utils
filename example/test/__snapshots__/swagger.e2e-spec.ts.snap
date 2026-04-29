@@ -30,6 +30,9 @@ exports[`OpenAPI > should generate OpenAPI documentation using snake_case 1`] = 
           "is_vaccinated": {
             "type": "boolean",
           },
+          "legacy_name_still_in_use": {
+            "type": "string",
+          },
           "magic_number": {
             "type": "number",
           },
@@ -45,6 +48,7 @@ exports[`OpenAPI > should generate OpenAPI documentation using snake_case 1`] = 
           "is_vaccinated",
           "magic_number",
           "created_at",
+          "legacy_name_still_in_use",
         ],
         "type": "object",
       },

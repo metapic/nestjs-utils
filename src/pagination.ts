@@ -103,45 +103,57 @@ export const ApiPaginatedResponse = (
 
 export class PaginationMeta implements IPaginationMeta {
   @ExposeApiProperty({
-    description: 'The amount of items on this specific page.',
+    apiProperty: {
+      description: 'The amount of items on this specific page.',
+    },
   })
   itemCount: number = 0
 
   @ExposeApiProperty({
-    description: 'The total amount of items on all pages.',
+    apiProperty: {
+      description: 'The total amount of items on all pages.',
+    },
   })
   totalItems?: number
 
   @ExposeApiProperty({
-    description: 'The amount of items on one page.',
+    apiProperty: {
+      description: 'The amount of items on one page.',
+    },
   })
   itemsPerPage: number = 0
 
   @ExposeApiProperty({
-    description: 'The total amount of pages in this paginator.',
+    apiProperty: {
+      description: 'The total amount of pages in this paginator.',
+    },
   })
   totalPages?: number
 
   @ExposeApiProperty({
-    description: 'The current page this paginator "points" to.',
+    apiProperty: {
+      description: 'The current page this paginator "points" to.',
+    },
   })
   currentPage: number = 1
 }
 
 export class PaginationLinks implements IPaginationLinks {
-  @ExposeApiProperty({ description: 'A link to the "first" page.', format: 'uri' })
+  @ExposeApiProperty({ apiProperty: { description: 'A link to the "first" page.', format: 'uri' } })
   @TransformEmptyString()
   first?: string
 
-  @ExposeApiProperty({ description: 'A link to the "previous" page.', format: 'uri' })
+  @ExposeApiProperty({
+    apiProperty: { description: 'A link to the "previous" page.', format: 'uri' },
+  })
   @TransformEmptyString()
   previous?: string
 
-  @ExposeApiProperty({ description: 'A link to the "next" page.', format: 'uri' })
+  @ExposeApiProperty({ apiProperty: { description: 'A link to the "next" page.', format: 'uri' } })
   @TransformEmptyString()
   next?: string
 
-  @ExposeApiProperty({ description: 'A link to the "last" page.', format: 'uri' })
+  @ExposeApiProperty({ apiProperty: { description: 'A link to the "last" page.', format: 'uri' } })
   @TransformEmptyString()
   last?: string
 }
@@ -158,12 +170,16 @@ export class Paginated<T> extends Pagination<T, PaginationMeta> {
 }
 
 export class PaginatedParams {
-  @ExposeApiProperty({ description: 'The page number.', default: 1, required: false })
+  @ExposeApiProperty({
+    apiProperty: { description: 'The page number.', default: 1, required: false },
+  })
   @IsOptional()
   @Min(1)
   page: number = 1
 
-  @ExposeApiProperty({ description: 'The number of items per page.', default: 10, required: false })
+  @ExposeApiProperty({
+    apiProperty: { description: 'The number of items per page.', default: 10, required: false },
+  })
   @IsOptional()
   @Min(1)
   @Max(100)
