@@ -72,8 +72,8 @@ export async function toPaginatedResponse<Dto, Entity extends ObjectLiteral>(
 
   return new Pagination(
     result.items.map(mapper),
-    plainToInstance(PaginationMeta, result.meta),
-    plainToInstance(PaginationLinks, result.links),
+    new PaginationMeta(result.meta),
+    result.links ? new PaginationLinks(result.links) : undefined,
   )
 }
 
@@ -126,6 +126,14 @@ export class PaginationMeta implements IPaginationMeta {
     description: 'The current page this paginator "points" to.',
   })
   currentPage: number = 1
+
+  constructor(source: PaginationMeta) {
+    this.currentPage = source.currentPage
+    this.itemCount = source.itemCount
+    this.itemsPerPage = source.itemsPerPage
+    this.totalItems = source.totalItems
+    this.totalPages = source.totalPages
+  }
 }
 
 export class PaginationLinks implements IPaginationLinks {
@@ -144,6 +152,13 @@ export class PaginationLinks implements IPaginationLinks {
   @ExposeApiProperty({ description: 'A link to the "last" page.', format: 'uri' })
   @TransformEmptyString()
   last?: string
+
+  constructor(source?: IPaginationLinks) {
+    this.first = source?.first
+    this.previous = source?.previous
+    this.next = source?.next
+    this.last = source?.last
+  }
 }
 
 export class Paginated<T> extends Pagination<T, PaginationMeta> {
@@ -158,7 +173,11 @@ export class Paginated<T> extends Pagination<T, PaginationMeta> {
 }
 
 export class PaginatedParams {
-  @ExposeApiProperty({ description: 'The page number.', default: 1, required: false })
+  @ExposeApiProperty({
+    description: 'The page number.',
+    default: 1,
+    required: false,
+  })
   @IsOptional()
   @Min(1)
   page: number = 1
