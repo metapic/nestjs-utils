@@ -14,18 +14,15 @@ export const TransformEmptyString = (defaultValue?: string): PropertyDecorator =
  * @see Expose
  * @see ApiProperty
  */
-export const ExposeApiProperty = (options?: {
-  name?: string
-  expose?: Omit<ExposeOptions, 'name'>
-  apiProperty?: Omit<ApiPropertyOptions, 'name'>
-}): PropertyDecorator => {
+export const ExposeApiProperty = (
+  options?: ApiPropertyOptions & {
+    groups?: ExposeOptions['groups']
+  },
+): PropertyDecorator => {
   return (target: object, propertyKey: string | symbol) => {
-    const { name, expose, apiProperty } = options ?? {}
-    ExposeSnakeCase({ ...(expose ?? {}), name })(target, propertyKey)
-    ApiPropertySnakeCase({ ...(apiProperty ?? {}), name } as ApiPropertyOptions)(
-      target,
-      propertyKey,
-    )
+    const { groups: _, ...rest } = options ?? {}
+    ExposeSnakeCase(options)(target, propertyKey)
+    ApiPropertySnakeCase(rest)(target, propertyKey)
   }
 }
 

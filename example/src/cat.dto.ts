@@ -4,24 +4,20 @@ import { Breed, Cat } from './cat.entity'
 
 export class GetCatsParams extends PaginatedParams {
   @ExposeApiProperty({
-    apiProperty: {
-      required: false,
-      description: 'Filter cats with age greater than the specified value',
-    },
+    description: 'Filter cats with age greater than the specified value',
+    required: false,
   })
   ageGreaterThan?: number
 
   @ExposeApiProperty({
-    apiProperty: {
-      required: false,
-      description: 'Filter cats by vaccination status',
-    },
+    required: false,
+    description: 'Filter cats by vaccination status',
   })
   isVaccinated?: boolean
 
   @ExposeApiProperty({
     name: 'legacy_name_that_cannot_change',
-    apiProperty: { required: false },
+    required: false,
   })
   newName!: string
 }
@@ -33,10 +29,10 @@ export class CreateCatRequest {
   @ExposeApiProperty()
   age!: number
 
-  @ExposeApiProperty({ apiProperty: { enum: Breed } })
+  @ExposeApiProperty({ enum: Breed })
   breed!: Breed
 
-  @ExposeApiProperty({ apiProperty: { required: false, default: false } })
+  @ExposeApiProperty({ required: false, default: false })
   isVaccinated?: boolean = false
 
   @ExposeApiProperty()
@@ -44,20 +40,18 @@ export class CreateCatRequest {
 }
 
 export class CatDto {
-  @ExposeApiProperty({ apiProperty: { format: 'uuid' } })
+  @ExposeApiProperty({ format: 'uuid' })
   id!: string
 
   @ExposeApiProperty()
   name!: string
 
   @ExposeApiProperty({
-    expose: {
-      groups: ['private'],
-    },
+    groups: ['private'],
   })
   age?: number
 
-  @ExposeApiProperty({ apiProperty: { enum: Breed } })
+  @ExposeApiProperty({ enum: Breed })
   breed!: Breed
 
   @ExposeApiProperty()
@@ -69,7 +63,10 @@ export class CatDto {
   @ExposeApiProperty()
   createdAt!: Date
 
-  @ExposeApiProperty({ name: 'legacy_name_still_in_use', apiProperty: { type: 'string' } })
+  @ExposeApiProperty({
+    name: 'legacy_name_still_in_use',
+    type: 'string',
+  })
   correctName = 'Garfield'
 
   static fromEntity(cat: Cat): CatDto {
