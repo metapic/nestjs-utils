@@ -222,6 +222,14 @@ exports[`OpenAPI > should generate OpenAPI documentation using snake_case 1`] = 
               "type": "boolean",
             },
           },
+          {
+            "in": "query",
+            "name": "legacy_name_that_cannot_change",
+            "required": false,
+            "schema": {
+              "type": "string",
+            },
+          },
         ],
         "responses": {
           "200": {

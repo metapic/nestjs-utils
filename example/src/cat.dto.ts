@@ -18,6 +18,12 @@ export class GetCatsParams extends PaginatedParams {
     },
   })
   isVaccinated?: boolean
+
+  @ExposeApiProperty({
+    name: 'legacy_name_that_cannot_change',
+    apiProperty: { required: false },
+  })
+  newName!: string
 }
 
 export class CreateCatRequest {

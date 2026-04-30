@@ -72,8 +72,8 @@ export async function toPaginatedResponse<Dto, Entity extends ObjectLiteral>(
 
   return new Pagination(
     result.items.map(mapper),
-    plainToInstance(PaginationMeta, result.meta),
-    plainToInstance(PaginationLinks, result.links),
+    new PaginationMeta(result.meta),
+    result.links ? new PaginationLinks(result.links) : undefined,
   )
 }
 
@@ -136,6 +136,14 @@ export class PaginationMeta implements IPaginationMeta {
     },
   })
   currentPage: number = 1
+
+  constructor(source: PaginationMeta) {
+    this.currentPage = source.currentPage
+    this.itemCount = source.itemCount
+    this.itemsPerPage = source.itemsPerPage
+    this.totalItems = source.totalItems
+    this.totalPages = source.totalPages
+  }
 }
 
 export class PaginationLinks implements IPaginationLinks {
@@ -156,6 +164,13 @@ export class PaginationLinks implements IPaginationLinks {
   @ExposeApiProperty({ apiProperty: { description: 'A link to the "last" page.', format: 'uri' } })
   @TransformEmptyString()
   last?: string
+
+  constructor(source?: IPaginationLinks) {
+    this.first = source?.first
+    this.previous = source?.previous
+    this.next = source?.next
+    this.last = source?.last
+  }
 }
 
 export class Paginated<T> extends Pagination<T, PaginationMeta> {

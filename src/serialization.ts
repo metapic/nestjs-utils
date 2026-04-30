@@ -21,7 +21,7 @@ export const ExposeApiProperty = (options?: {
 }): PropertyDecorator => {
   return (target: object, propertyKey: string | symbol) => {
     const { name, expose, apiProperty } = options ?? {}
-    ExposeSnakeCase({ ...(expose ?? {}), name, toPlainOnly: true })(target, propertyKey)
+    ExposeSnakeCase({ ...(expose ?? {}), name })(target, propertyKey)
     ApiPropertySnakeCase({ ...(apiProperty ?? {}), name } as ApiPropertyOptions)(
       target,
       propertyKey,
