@@ -4,8 +4,8 @@ import { Breed, Cat } from './cat.entity'
 
 export class GetCatsParams extends PaginatedParams {
   @ExposeApiProperty({
-    required: false,
     description: 'Filter cats with age greater than the specified value',
+    required: false,
   })
   ageGreaterThan?: number
 
@@ -14,6 +14,12 @@ export class GetCatsParams extends PaginatedParams {
     description: 'Filter cats by vaccination status',
   })
   isVaccinated?: boolean
+
+  @ExposeApiProperty({
+    name: 'legacy_name_that_cannot_change',
+    required: false,
+  })
+  newName!: string
 }
 
 export class CreateCatRequest {
@@ -41,9 +47,7 @@ export class CatDto {
   name!: string
 
   @ExposeApiProperty({
-    expose: {
-      groups: ['private'],
-    },
+    groups: ['private'],
   })
   age?: number
 
@@ -58,6 +62,12 @@ export class CatDto {
 
   @ExposeApiProperty()
   createdAt!: Date
+
+  @ExposeApiProperty({
+    name: 'legacy_name_still_in_use',
+    type: 'string',
+  })
+  correctName = 'Garfield'
 
   static fromEntity(cat: Cat): CatDto {
     const dto = new CatDto()
