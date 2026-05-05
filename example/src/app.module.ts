@@ -15,7 +15,7 @@ import { CatsModule } from './cats.module'
       database: 'example',
       synchronize: true,
       autoLoadEntities: true,
-      logging: true,
+      // logging: true,
     }),
     CatsModule,
   ],

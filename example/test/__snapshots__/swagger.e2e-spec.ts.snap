@@ -4,6 +4,29 @@ exports[`OpenAPI > should generate OpenAPI documentation using snake_case 1`] = 
 {
   "components": {
     "schemas": {
+      "BreedCountDto": {
+        "properties": {
+          "breed": {
+            "enum": [
+              "bengal",
+              "birman",
+              "maine_coon",
+              "persian",
+              "siamese",
+            ],
+            "type": "string",
+          },
+          "count": {
+            "description": "Count of cats for this breed",
+            "type": "number",
+          },
+        },
+        "required": [
+          "breed",
+          "count",
+        ],
+        "type": "object",
+      },
       "CatDto": {
         "properties": {
           "age": {
@@ -180,6 +203,66 @@ exports[`OpenAPI > should generate OpenAPI documentation using snake_case 1`] = 
   },
   "openapi": "3.0.0",
   "paths": {
+    "/cat-stats/breeds": {
+      "get": {
+        "operationId": "GetBreedStats",
+        "parameters": [
+          {
+            "description": "The page number.",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "type": "number",
+            },
+          },
+          {
+            "description": "The number of items per page.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "type": "number",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "$ref": "#/components/schemas/BreedCountDto",
+                      },
+                      "type": "array",
+                    },
+                    "links": {
+                      "$ref": "#/components/schemas/PaginationLinks",
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/PaginationMeta",
+                    },
+                  },
+                  "required": [
+                    "items",
+                    "meta",
+                    "links",
+                  ],
+                },
+              },
+            },
+            "description": "",
+          },
+        },
+        "tags": [
+          "CatStats",
+        ],
+      },
+    },
     "/cats": {
       "get": {
         "operationId": "GetCats",

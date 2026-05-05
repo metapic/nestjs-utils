@@ -18,44 +18,55 @@ describe('Serialization', () => {
     await module.get<Repository<Cat>>(getRepositoryToken(Cat)).deleteAll()
   })
 
-  describe('Cats API', () => {
-    let createResponses: Awaited<ReturnType<typeof app.inject>>[]
-    let catIds: {
-      whiskers: string
-      fluffy: string
+  let createResponses: Awaited<ReturnType<typeof app.inject>>[]
+  let catIds: {
+    whiskers: string
+    fluffy: string
+    blabby: string
+  }
+
+  beforeAll(async () => {
+    createResponses = await Promise.all([
+      app.inject({
+        method: 'POST',
+        url: '/cats',
+        body: {
+          name: 'Whiskers',
+          age: 3,
+          breed: 'SIAMESE',
+          is_vaccinated: true,
+          magic_number: 99999,
+        },
+      }),
+      app.inject({
+        method: 'POST',
+        url: '/cats',
+        body: {
+          name: 'Fluffy',
+          age: 8,
+          breed: 'BIRMAN',
+          magic_number: 1,
+        },
+      }),
+      app.inject({
+        method: 'POST',
+        url: '/cats',
+        body: {
+          name: 'Blabby',
+          age: 4,
+          breed: 'BIRMAN',
+          magic_number: 1,
+        },
+      }),
+    ])
+
+    catIds = {
+      whiskers: createResponses[0].json<{ id: string }>().id,
+      fluffy: createResponses[1].json<{ id: string }>().id,
+      blabby: createResponses[2].json<{ id: string }>().id,
     }
-
-    beforeAll(async () => {
-      createResponses = await Promise.all([
-        app.inject({
-          method: 'POST',
-          url: '/cats',
-          body: {
-            name: 'Whiskers',
-            age: 3,
-            breed: 'SIAMESE',
-            is_vaccinated: true,
-            magic_number: 99999,
-          },
-        }),
-        app.inject({
-          method: 'POST',
-          url: '/cats',
-          body: {
-            name: 'Fluffy',
-            age: 8,
-            breed: 'BIRMAN',
-            magic_number: 1,
-          },
-        }),
-      ])
-
-      catIds = {
-        whiskers: createResponses[0].json<{ id: string }>().id,
-        fluffy: createResponses[1].json<{ id: string }>().id,
-      }
-    })
-
+  })
+  describe('Cats API', () => {
     it('should create a cat with snake_case request and response payloads', () => {
       expect(createResponses[0].statusCode).toBe(201)
       expect(createResponses[0].json()).toEqual({
@@ -122,6 +133,15 @@ describe('Serialization', () => {
             created_at: expect.stringMatching(isoDateTimeRegex) as string,
           },
           {
+            id: catIds.blabby,
+            name: 'Blabby',
+            breed: 'birman',
+            legacy_name_still_in_use: 'Garfield',
+            is_vaccinated: false,
+            magic_number: 1,
+            created_at: expect.stringMatching(isoDateTimeRegex) as string,
+          },
+          {
             id: catIds.whiskers,
             name: 'Whiskers',
             breed: 'siamese',
@@ -133,9 +153,9 @@ describe('Serialization', () => {
         ],
         meta: {
           current_page: 1,
-          item_count: 2,
+          item_count: 3,
           items_per_page: 10,
-          total_items: 2,
+          total_items: 3,
           total_pages: 1,
         },
       })
@@ -164,8 +184,8 @@ describe('Serialization', () => {
           current_page: 1,
           item_count: 1,
           items_per_page: 1,
-          total_items: 2,
-          total_pages: 2,
+          total_items: 3,
+          total_pages: 3,
         },
       })
 
@@ -178,6 +198,32 @@ describe('Serialization', () => {
       expect(pageTwoResponse.json()).toEqual({
         items: [
           {
+            id: catIds.blabby,
+            name: 'Blabby',
+            breed: 'birman',
+            is_vaccinated: false,
+            legacy_name_still_in_use: 'Garfield',
+            magic_number: 1,
+            created_at: expect.stringMatching(isoDateTimeRegex) as string,
+          },
+        ],
+        meta: {
+          current_page: 2,
+          item_count: 1,
+          items_per_page: 1,
+          total_items: 3,
+          total_pages: 3,
+        },
+      })
+      const pageThree = await app.inject({
+        method: 'GET',
+        url: '/cats',
+        query: { page: '3', limit: '1' },
+      })
+      expect(pageThree.statusCode).toBe(200)
+      expect(pageThree.json()).toEqual({
+        items: [
+          {
             id: catIds.whiskers,
             name: 'Whiskers',
             breed: 'siamese',
@@ -188,11 +234,11 @@ describe('Serialization', () => {
           },
         ],
         meta: {
-          current_page: 2,
+          current_page: 3,
           item_count: 1,
           items_per_page: 1,
-          total_items: 2,
-          total_pages: 2,
+          total_items: 3,
+          total_pages: 3,
         },
       })
     })
@@ -222,6 +268,59 @@ describe('Serialization', () => {
           items_per_page: 10,
           total_items: 1,
           total_pages: 1,
+        },
+      })
+    })
+  })
+
+  describe('Cat Stats API', () => {
+    it('should return breed counts ordered by count descending', async () => {
+      const response = await app.inject({
+        method: 'GET',
+        url: '/cat-stats/breeds',
+      })
+      expect(response.statusCode).toBe(200)
+      expect(response.json()).toEqual({
+        items: [
+          {
+            breed: 'birman',
+            count: 2,
+          },
+          {
+            breed: 'siamese',
+            count: 1,
+          },
+        ],
+        meta: {
+          current_page: 1,
+          item_count: 2,
+          items_per_page: 10,
+          total_items: 2,
+          total_pages: 1,
+        },
+      })
+    })
+
+    it('should respect pagination params on breed stats', async () => {
+      const response = await app.inject({
+        method: 'GET',
+        url: '/cat-stats/breeds',
+        query: { page: '1', limit: '1' },
+      })
+      expect(response.statusCode).toBe(200)
+      expect(response.json()).toEqual({
+        items: [
+          {
+            breed: 'birman',
+            count: 2,
+          },
+        ],
+        meta: {
+          current_page: 1,
+          item_count: 1,
+          items_per_page: 1,
+          total_items: 2,
+          total_pages: 2,
         },
       })
     })
