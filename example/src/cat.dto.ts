@@ -69,7 +69,7 @@ export class CatDto {
   })
   correctName = 'Garfield'
 
-  static fromEntity(cat: Cat): CatDto {
+  static fromEntity(this: void, cat: Cat): CatDto {
     const dto = new CatDto()
     dto.id = cat.id
     dto.name = cat.name
@@ -94,7 +94,7 @@ export class BreedCountDto {
   @ExposeApiProperty({ description: 'Count of cats for this breed' })
   count!: number
 
-  static fromProjection(projection: BreedCountProjection): BreedCountDto {
+  static fromProjection(this: void, projection: BreedCountProjection): BreedCountDto {
     const dto = new BreedCountDto()
     dto.breed = projection.breed as Breed
     dto.count = Number(projection.count)

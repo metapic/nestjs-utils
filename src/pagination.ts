@@ -20,17 +20,63 @@ import {
   FindOptionsWhere,
   type ObjectLiteral,
   Repository,
-  type SelectQueryBuilder,
+  SelectQueryBuilder,
 } from 'typeorm'
 
 import { ExposeApiProperty, TransformEmptyString } from './serialization.js'
 
-export async function toPaginatedProjectionResponse<Dto, Projection extends ObjectLiteral>(
-  queryBuilder: SelectQueryBuilder<Projection>,
-  mapper: (projection: Projection) => Dto,
+declare module 'typeorm' {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+  interface SelectQueryBuilder<Entity extends ObjectLiteral> {
+    toPaginatedResponse<Dto>(
+      mapper: (entity: Entity) => Dto,
+      paginationOptions: IPaginationOptions,
+    ): Promise<Paginated<Dto>>
+
+    toPaginatedResponse<Dto>(
+      dto: { fromEntity(entity: Entity): Dto },
+      paginationOptions: IPaginationOptions,
+    ): Promise<Paginated<Dto>>
+
+    toPaginatedProjectionResponse<Dto>(
+      mapper: (entity: Entity) => Dto,
+      paginationOptions: IPaginationOptions,
+    ): Promise<Paginated<Dto>>
+
+    toPaginatedProjectionResponse<Dto>(
+      dto: { fromProjection(projection: Entity): Dto },
+      paginationOptions: IPaginationOptions,
+    ): Promise<Paginated<Dto>>
+  }
+
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+  interface Repository<Entity extends ObjectLiteral> {
+    toPaginatedResponse<Dto>(
+      mapper: (entity: Entity) => Dto,
+      paginationOptions: IPaginationOptions,
+      searchOptions?: FindOptionsWhere<Entity> | FindManyOptions<Entity>,
+    ): Promise<Paginated<Dto>>
+
+    toPaginatedResponse<Dto>(
+      dto: { fromEntity(entity: Entity): Dto },
+      paginationOptions: IPaginationOptions,
+      searchOptions?: FindOptionsWhere<Entity> | FindManyOptions<Entity>,
+    ): Promise<Paginated<Dto>>
+  }
+}
+
+SelectQueryBuilder.prototype.toPaginatedProjectionResponse = async function <Dto>(
+  this: SelectQueryBuilder<ObjectLiteral>,
+  mapperOrDto:
+    | ((entity: ObjectLiteral) => Dto)
+    | { fromProjection(projection: ObjectLiteral): Dto },
   paginationOptions: IPaginationOptions,
 ): Promise<Paginated<Dto>> {
-  const result = await paginateRaw(queryBuilder, paginationOptions)
+  const mapper =
+    typeof mapperOrDto === 'function'
+      ? mapperOrDto
+      : (item: ObjectLiteral) => mapperOrDto.fromProjection(item)
+  const result = await paginateRaw(this, paginationOptions)
   return new Pagination(
     result.items.map(mapper),
     new PaginationMeta(result.meta),
@@ -38,33 +84,34 @@ export async function toPaginatedProjectionResponse<Dto, Projection extends Obje
   )
 }
 
-export async function toPaginatedResponse<Dto, Entity extends ObjectLiteral>(
-  mapper: (entity: Entity) => Dto,
-  queryBuilder: SelectQueryBuilder<Entity>,
+SelectQueryBuilder.prototype.toPaginatedResponse = async function <Dto>(
+  this: SelectQueryBuilder<ObjectLiteral>,
+  mapperOrDto: ((entity: ObjectLiteral) => Dto) | { fromEntity(entity: ObjectLiteral): Dto },
   paginationOptions: IPaginationOptions,
-): Promise<Paginated<Dto>>
-
-export async function toPaginatedResponse<Dto, Entity extends ObjectLiteral>(
-  mapper: (entity: Entity) => Dto,
-  repository: Repository<Entity>,
-  paginationOptions: IPaginationOptions,
-  searchOptions?: FindOptionsWhere<Entity> | FindManyOptions<Entity>,
-): Promise<Paginated<Dto>>
-
-export async function toPaginatedResponse<Dto, Entity extends ObjectLiteral>(
-  mapper: (entity: Entity) => Dto,
-  queryBuilderOrRepository: SelectQueryBuilder<Entity> | Repository<Entity>,
-  paginationOptions: IPaginationOptions,
-  searchOptions?: FindOptionsWhere<Entity> | FindManyOptions<Entity>,
 ): Promise<Paginated<Dto>> {
-  let result
+  const mapper =
+    typeof mapperOrDto === 'function'
+      ? mapperOrDto
+      : (item: ObjectLiteral) => mapperOrDto.fromEntity(item)
+  const result = await paginate(this, paginationOptions)
+  return new Pagination(
+    result.items.map(mapper),
+    new PaginationMeta(result.meta),
+    result.links ? new PaginationLinks(result.links) : undefined,
+  )
+}
 
-  if (queryBuilderOrRepository instanceof Repository) {
-    result = await paginate(queryBuilderOrRepository, paginationOptions, searchOptions)
-  } else {
-    result = await paginate(queryBuilderOrRepository, paginationOptions)
-  }
-
+Repository.prototype.toPaginatedResponse = async function <Dto>(
+  this: Repository<ObjectLiteral>,
+  mapperOrDto: ((entity: ObjectLiteral) => Dto) | { fromEntity(entity: ObjectLiteral): Dto },
+  paginationOptions: IPaginationOptions,
+  searchOptions?: FindOptionsWhere<ObjectLiteral> | FindManyOptions<ObjectLiteral>,
+): Promise<Paginated<Dto>> {
+  const mapper =
+    typeof mapperOrDto === 'function'
+      ? mapperOrDto
+      : (item: ObjectLiteral) => mapperOrDto.fromEntity(item)
+  const result = await paginate(this, paginationOptions, searchOptions)
   return new Pagination(
     result.items.map(mapper),
     new PaginationMeta(result.meta),
