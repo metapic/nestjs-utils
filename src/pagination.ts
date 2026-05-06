@@ -6,7 +6,6 @@ import {
   ApiResponseNoStatusOptions,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { type ClassConstructor, plainToInstance } from 'class-transformer'
 import { IsOptional, Max, Min } from 'class-validator'
 import {
   type IPaginationLinks,
@@ -27,19 +26,15 @@ import {
 import { ExposeApiProperty, TransformEmptyString } from './serialization.js'
 
 export async function toPaginatedProjectionResponse<Dto, Projection extends ObjectLiteral>(
-  projection: ClassConstructor<Projection>,
-  mapper: (projection: Projection) => Dto,
   queryBuilder: SelectQueryBuilder<Projection>,
+  mapper: (projection: Projection) => Dto,
   paginationOptions: IPaginationOptions,
 ): Promise<Paginated<Dto>> {
   const result = await paginateRaw(queryBuilder, paginationOptions)
   return new Pagination(
-    plainToInstance(projection, result.items, { excludeExtraneousValues: true }).map(mapper),
-    plainToInstance(PaginationMeta, result.meta),
-    plainToInstance(PaginationLinks, result.links, {
-      exposeDefaultValues: false,
-      exposeUnsetFields: false,
-    }),
+    result.items.map(mapper),
+    new PaginationMeta(result.meta),
+    result.links ? new PaginationLinks(result.links) : undefined,
   )
 }
 

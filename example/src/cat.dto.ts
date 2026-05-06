@@ -81,3 +81,23 @@ export class CatDto {
     return dto
   }
 }
+
+export type BreedCountProjection = {
+  breed: string
+  count: string
+}
+
+export class BreedCountDto {
+  @ExposeApiProperty({ enum: Breed })
+  breed!: Breed
+
+  @ExposeApiProperty({ description: 'Count of cats for this breed' })
+  count!: number
+
+  static fromProjection(projection: BreedCountProjection): BreedCountDto {
+    const dto = new BreedCountDto()
+    dto.breed = projection.breed as Breed
+    dto.count = Number(projection.count)
+    return dto
+  }
+}

@@ -18,22 +18,17 @@ export class CatsController {
   @Get()
   @ApiPaginatedResponse({ type: CatDto })
   async getCats(@Query() params: GetCatsParams): Promise<Paginated<CatDto>> {
-    return await toPaginatedResponse<CatDto, Cat>(
-      CatDto.fromEntity.bind(this),
-      this.repository,
-      params,
-      {
-        where: {
-          ...(params.ageGreaterThan !== undefined && {
-            age: MoreThan(params.ageGreaterThan),
-          }),
-          ...(params.isVaccinated !== undefined && {
-            isVaccinated: params.isVaccinated,
-          }),
-        },
-        order: { magicNumber: 'ASC' },
+    return await toPaginatedResponse((item) => CatDto.fromEntity(item), this.repository, params, {
+      where: {
+        ...(params.ageGreaterThan !== undefined && {
+          age: MoreThan(params.ageGreaterThan),
+        }),
+        ...(params.isVaccinated !== undefined && {
+          isVaccinated: params.isVaccinated,
+        }),
       },
-    )
+      order: { magicNumber: 'ASC' },
+    })
   }
 
   @Get(':id')
