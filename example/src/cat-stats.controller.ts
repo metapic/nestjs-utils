@@ -9,8 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
 import { BreedCountDto } from './cat.dto'
-
-import { Cat } from '@/cat.entity'
+import { Cat } from './cat.entity'
 
 @Controller('cat-stats')
 export class CatStatsController {
