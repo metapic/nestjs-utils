@@ -2,12 +2,12 @@ import { Controller, Get, Injectable, UseGuards } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import { Test } from '@nestjs/testing'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 import { AuthModule } from './auth.module.js'
 import { CurrentUser } from './decorators/current-user.decorator.js'
 import { Public } from './decorators/public.decorator.js'
-import { SkipGuards } from './decorators/skip-guard.decorator.js'
+import { SkipGuards } from './decorators/skip-guards.decorator.js'
 import { ApiKeyAuthGuard } from './guards/api-key-auth.guard.js'
 import { AuthGuard } from './guards/auth.guard.js'
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js'
@@ -83,9 +83,9 @@ class AuthService implements UserApiKeyResolver<User>, UserJwtResolver<User> {
 }
 
 describe('Auth module', () => {
-  describe('with global auth guard', () => {
-    let app: NestFastifyApplication
+  let app: NestFastifyApplication
 
+  describe('with global auth guard', () => {
     beforeAll(async () => {
       const module = await Test.createTestingModule({
         controllers: [TestController],
@@ -107,10 +107,6 @@ describe('Auth module', () => {
       app = module.createNestApplication(new FastifyAdapter())
       await app.init()
       await app.getHttpAdapter().getInstance().ready()
-    })
-
-    afterAll(async () => {
-      await app?.close()
     })
 
     describe('unauthorized request', () => {
@@ -174,8 +170,6 @@ describe('Auth module', () => {
   })
 
   describe('without global auth guard', () => {
-    let app: NestFastifyApplication
-
     beforeAll(async () => {
       const module = await Test.createTestingModule({
         controllers: [TestController],
@@ -197,10 +191,6 @@ describe('Auth module', () => {
       app = module.createNestApplication(new FastifyAdapter())
       await app.init()
       await app.getHttpAdapter().getInstance().ready()
-    })
-
-    afterAll(async () => {
-      await app?.close()
     })
 
     describe('unauthorized request', () => {

@@ -10,7 +10,7 @@ import {
 import { Reflector } from '@nestjs/core'
 
 import { IS_PUBLIC_TOKEN } from '../decorators/public.decorator.js'
-import { SKIP_GUARDS_TOKEN } from '../decorators/skip-guard.decorator.js'
+import { SKIP_GUARDS_TOKEN } from '../decorators/skip-guards.decorator.js'
 
 export const AUTH_GUARDS_TOKEN = Symbol('AUTH_GUARDS')
 export const AUTH_EXCLUDED_PATHS_TOKEN = Symbol('AUTH_EXCLUDED_PATHS')

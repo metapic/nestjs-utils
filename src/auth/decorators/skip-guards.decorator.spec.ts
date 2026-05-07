@@ -1,7 +1,7 @@
 import { type CanActivate } from '@nestjs/common'
 import { describe, expect, it } from 'vitest'
 
-import { SKIP_GUARDS_TOKEN, SkipGuards } from './skip-guard.decorator.js'
+import { SKIP_GUARDS_TOKEN, SkipGuards } from './skip-guards.decorator.js'
 
 class GuardA implements CanActivate {
   canActivate() {

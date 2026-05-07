@@ -55,11 +55,12 @@ export class AuthModule {
       providers.push(JwtAuthGuard)
 
       if (finalOptions.userJwtResolver) {
-        providers.push(
-          typeof finalOptions.userJwtResolver === 'function'
-            ? { provide: USER_JWT_RESOLVER_TOKEN, useClass: finalOptions.userJwtResolver }
-            : { provide: USER_JWT_RESOLVER_TOKEN, useValue: finalOptions.userJwtResolver },
-        )
+        providers.push({
+          provide: USER_JWT_RESOLVER_TOKEN,
+          ...(typeof finalOptions.userJwtResolver === 'function'
+            ? { useClass: finalOptions.userJwtResolver }
+            : { useValue: finalOptions.userJwtResolver }),
+        })
       }
     }
 
@@ -68,11 +69,12 @@ export class AuthModule {
       providers.push(ApiKeyAuthGuard)
 
       if (finalOptions.userApiKeyResolver) {
-        providers.push(
-          typeof finalOptions.userApiKeyResolver === 'function'
-            ? { provide: USER_API_KEY_RESOLVER_TOKEN, useClass: finalOptions.userApiKeyResolver }
-            : { provide: USER_API_KEY_RESOLVER_TOKEN, useValue: finalOptions.userApiKeyResolver },
-        )
+        providers.push({
+          provide: USER_API_KEY_RESOLVER_TOKEN,
+          ...(typeof finalOptions.userApiKeyResolver === 'function'
+            ? { useClass: finalOptions.userApiKeyResolver }
+            : { useValue: finalOptions.userApiKeyResolver }),
+        })
       }
     }
 
