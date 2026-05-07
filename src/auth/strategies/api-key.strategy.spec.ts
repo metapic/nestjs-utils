@@ -1,28 +1,26 @@
-import { UnauthorizedException } from '@nestjs/common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
-import { ApiKeyStrategy } from './api-key.strategy.js'
+import { ApiKeyStrategy, type UserApiKeyResolver } from './api-key.strategy.js'
 
 describe('ApiKeyStrategy', () => {
-  const mockResolver = { findUserByApiKey: vi.fn() }
-  let strategy: ApiKeyStrategy<{ id: string }>
+  const user = { id: '1' }
+  const userResolver: UserApiKeyResolver<typeof user> = {
+    findUserByApiKey(token: string) {
+      return token === 'abcdef' ? user : null
+    },
+  }
+
+  let strategy: ApiKeyStrategy<typeof user>
 
   beforeEach(() => {
-    vi.clearAllMocks()
-    strategy = new ApiKeyStrategy<{ id: string }>(mockResolver)
+    strategy = new ApiKeyStrategy<typeof user>(userResolver)
   })
 
   it('returns the user when the resolver finds one', () => {
-    const user = { id: '1' }
-    mockResolver.findUserByApiKey.mockReturnValue(user)
-
-    expect(strategy.validate('valid-token')).toBe(user)
-    expect(mockResolver.findUserByApiKey).toHaveBeenCalledWith('valid-token')
+    expect(strategy.validate('abcdef')).toEqual(user)
   })
 
-  it('throws UnauthorizedException when the resolver returns null', () => {
-    mockResolver.findUserByApiKey.mockReturnValue(null)
-
-    expect(() => strategy.validate('invalid-token')).toThrow(UnauthorizedException)
+  it('returns null when the resolver returns null', () => {
+    expect(strategy.validate('invalid')).toBeNull()
   })
 })

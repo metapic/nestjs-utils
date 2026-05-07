@@ -1,10 +1,9 @@
 import * as fs from 'node:fs'
 
-import { UnauthorizedException } from '@nestjs/common'
 import { type ConfigService } from '@nestjs/config'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { JwtStrategy } from './jwt.strategy.js'
+import { JwtStrategy, type UserJwtResolver } from './jwt.strategy.js'
 
 vi.mock('node:fs')
 
@@ -63,26 +62,25 @@ describe('JwtStrategy', () => {
   })
 
   describe('validate', () => {
-    let strategy: JwtStrategy<{ id: string }>
-    const mockResolver = { findUserByJwt: vi.fn() }
+    const user = { id: '1' }
+    const userResolver: UserJwtResolver<typeof user> = {
+      findUserByJwt(payload: Record<string, unknown>) {
+        return payload.sub === 'abcdef' ? user : null
+      },
+    }
+
+    let strategy: JwtStrategy<typeof user>
 
     beforeEach(() => {
-      strategy = new JwtStrategy<{ id: string }>(makeConfig('test-secret'), mockResolver)
+      strategy = new JwtStrategy<typeof user>(makeConfig('test-secret'), userResolver)
     })
 
     it('returns the user when the resolver finds one', () => {
-      const user = { id: '42' }
-      const payload = { sub: '42', iat: 1000 }
-      mockResolver.findUserByJwt.mockReturnValue(user)
-
-      expect(strategy.validate(payload)).toBe(user)
-      expect(mockResolver.findUserByJwt).toHaveBeenCalledWith(payload)
+      expect(strategy.validate({ sub: 'abcdef', iat: 1000 })).toBe(user)
     })
 
-    it('throws UnauthorizedException when the resolver returns null', () => {
-      mockResolver.findUserByJwt.mockReturnValue(null)
-
-      expect(() => strategy.validate({ sub: '42' })).toThrow(UnauthorizedException)
+    it('returns null when the resolver returns null', () => {
+      expect(strategy.validate({ sub: '42' })).toBeNull()
     })
   })
 })
