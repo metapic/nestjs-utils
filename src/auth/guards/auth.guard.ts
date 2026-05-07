@@ -55,9 +55,9 @@ export class AuthGuard implements CanActivate {
         if (result) {
           return true
         }
-      } catch (error) {
-        this.logger.debug('Authentication failed for guard: {error}', {
-          error: (error as Error).message,
+      } catch (err) {
+        this.logger.debug('Authentication failed for guard: {err}', {
+          err,
         })
       }
     }
