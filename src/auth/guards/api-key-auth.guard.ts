@@ -1,5 +1,4 @@
-import { type CanActivate, Injectable } from '@nestjs/common'
+import { type CanActivate } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 
-@Injectable()
 export class ApiKeyAuthGuard extends AuthGuard('apiKey') implements CanActivate {}

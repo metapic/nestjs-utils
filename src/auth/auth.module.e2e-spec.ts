@@ -1,4 +1,4 @@
-import { Controller, Get, Injectable, UseGuards } from '@nestjs/common'
+import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import { Test } from '@nestjs/testing'
@@ -71,7 +71,6 @@ class TestController {
 const apiKey = 'api-key-12345'
 const validUserId = '123456789'
 
-@Injectable()
 class AuthService implements UserApiKeyResolver<User>, UserJwtResolver<User> {
   findUserByApiKey(token: string) {
     return token === apiKey ? new User(validUserId) : null
@@ -135,7 +134,7 @@ describe('Auth module', () => {
         ['/explicit-api-key', validUserId, 401],
         ['/skip-api-key', validUserId, 200],
         ['/skip-jwt', validUserId, 401],
-        ['/private', 'invalid', 401],
+        ['/explicit-jwt', 'invalid', 401],
       ])('GET %s with userId %s => %i', async (path, userId, expectedStatus) => {
         const token = createJwt(app, { user_id: userId })
         const result = await app.inject({
@@ -157,7 +156,7 @@ describe('Auth module', () => {
         ['/explicit-api-key', apiKey, 200],
         ['/skip-api-key', apiKey, 401],
         ['/skip-jwt', apiKey, 200],
-        ['/private', 'invalid', 401],
+        ['/explicit-api-key', 'invalid', 401],
       ])('GET %s with API key %s => %i', async (path, token, expectedStatus) => {
         const result = await app.inject({
           method: 'GET',

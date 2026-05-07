@@ -2,7 +2,6 @@ import {
   CanActivate,
   ExecutionContext,
   Inject,
-  Injectable,
   Logger,
   type Type,
   UnauthorizedException,
@@ -15,7 +14,6 @@ import { SKIP_GUARDS_TOKEN } from '../decorators/skip-guards.decorator.js'
 export const AUTH_GUARDS_TOKEN = Symbol('AUTH_GUARDS')
 export const AUTH_EXCLUDED_PATHS_TOKEN = Symbol('AUTH_EXCLUDED_PATHS')
 
-@Injectable()
 export class AuthGuard implements CanActivate {
   private readonly logger = new Logger(AuthGuard.name)
 
@@ -31,12 +29,14 @@ export class AuthGuard implements CanActivate {
       context.getClass(),
     ])
     if (isPublic) {
+      this.logger.debug('Public route accessed, skipping authentication')
       return true
     }
 
     if (this.excludedPaths.length > 0) {
       const request = context.switchToHttp().getRequest<Request>()
       if (request?.url && this.excludedPaths.some((p) => request.url.startsWith(p))) {
+        this.logger.debug('Excluded path accessed, skipping authentication')
         return true
       }
     }

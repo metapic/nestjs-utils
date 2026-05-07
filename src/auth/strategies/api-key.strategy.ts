@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-http-bearer'
 
@@ -9,7 +9,6 @@ export interface UserApiKeyResolver<TUser> {
   findUserByApiKey(token: string): TUser | null
 }
 
-@Injectable()
 export class ApiKeyStrategy<TUser> extends PassportStrategy(Strategy, 'apiKey') {
   constructor(
     @Inject(USER_API_KEY_RESOLVER_TOKEN) private readonly resolver: UserApiKeyResolver<TUser>,
@@ -17,11 +16,7 @@ export class ApiKeyStrategy<TUser> extends PassportStrategy(Strategy, 'apiKey') 
     super()
   }
 
-  validate(token: string): TUser {
-    const user = this.resolver.findUserByApiKey(token)
-    if (user === null) {
-      throw new UnauthorizedException()
-    }
-    return user
+  validate(token: string): TUser | null {
+    return this.resolver.findUserByApiKey(token)
   }
 }

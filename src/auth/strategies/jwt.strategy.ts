@@ -1,6 +1,6 @@
 import * as fs from 'node:fs'
 
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy, StrategyOptionsWithSecret } from 'passport-jwt'
@@ -14,7 +14,6 @@ export interface UserJwtResolver<TUser> {
   findUserByJwt(payload: Record<string, unknown>): TUser | null
 }
 
-@Injectable()
 export class JwtStrategy<TUser> extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     config: ConfigService,
@@ -39,11 +38,7 @@ export class JwtStrategy<TUser> extends PassportStrategy(Strategy, 'jwt') {
     } as StrategyOptionsWithSecret)
   }
 
-  validate(payload: Record<string, unknown>): TUser {
-    const user = this.resolver.findUserByJwt(payload)
-    if (user === null) {
-      throw new UnauthorizedException()
-    }
-    return user
+  validate(payload: Record<string, unknown>): TUser | null {
+    return this.resolver.findUserByJwt(payload)
   }
 }
