@@ -48,15 +48,24 @@ export class AuthGuard implements CanActivate {
 
     for (const guard of this.guards) {
       if (skipped?.some((cls) => guard instanceof cls)) {
+        this.logger.debug('Guard {guard} skipped for this route', {
+          guard: guard.constructor.name,
+        })
         continue
       }
+
       try {
         const result = await guard.canActivate(context)
         if (result) {
           return true
+        } else {
+          this.logger.debug('Authentication failed for guard: {guard}', {
+            guard: guard.constructor.name,
+          })
         }
       } catch (err) {
-        this.logger.debug('Authentication failed for guard: {err}', {
+        this.logger.debug('Authentication failed for guard: {guard}', {
+          guard: guard.constructor.name,
           err,
         })
       }

@@ -83,15 +83,11 @@ export class AuthModule {
     if (finalOptions.provideGlobalAuthGuard) {
       providers.push({
         provide: APP_GUARD,
-        useClass: AuthGuard,
+        useExisting: AuthGuard,
       })
     }
 
-    const exports: (Provider | symbol | string)[] = [
-      AuthGuard,
-      AUTH_GUARDS_TOKEN,
-      AUTH_EXCLUDED_PATHS_TOKEN,
-    ]
+    const exports: (Provider | symbol | string)[] = [AUTH_GUARDS_TOKEN, AUTH_EXCLUDED_PATHS_TOKEN]
 
     if (finalOptions.useJwt) {
       exports.push(JwtStrategy)
