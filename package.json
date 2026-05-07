@@ -5,7 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
-    "./typeorm": "./dist/typeorm.js"
+    "./*": "./dist/*/index.js"
   },
   "files": [
     "dist/**/*"
@@ -23,6 +23,8 @@
     "clean": "rm -rf ./dist",
     "lint": "tsc && eslint --cache",
     "lint:fix": "tsc && eslint --cache --fix",
+    "test": "vitest run",
+    "test:dev": "vitest",
     "semantic-release": "semantic-release"
   },
   "license": "MIT",
@@ -46,22 +48,30 @@
   ],
   "peerDependencies": {
     "@nestjs/common": ">=11",
+    "@nestjs/config": ">=4",
     "@nestjs/core": ">=11",
+    "@nestjs/passport": ">=11",
     "@nestjs/swagger": ">=11",
     "@nestjs/typeorm": ">=11",
     "change-case": ">=5",
     "class-transformer": ">=0.5.1",
     "class-validator": ">=0.14.3",
-    "nestjs-typeorm-paginate": ">=4"
+    "nestjs-typeorm-paginate": ">=4",
+    "passport-http-bearer": ">=1",
+    "passport-jwt": ">=4"
   },
   "devDependencies": {
     "@metapic/eslint-config": "^1.0.12",
     "@metapic/prettier-config": "^1.0.3",
     "@nestjs/common": "^11.1.12",
+    "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.1.12",
+    "@nestjs/platform-fastify": "^11.1.19",
     "@nestjs/swagger": "^11.2.5",
     "@nestjs/typeorm": "^11.0.0",
     "@types/node": "^25.0.10",
+    "@types/passport-http-bearer": "^1.0.42",
+    "@types/passport-jwt": "^4.0.1",
     "change-case": "^5.4.4",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",

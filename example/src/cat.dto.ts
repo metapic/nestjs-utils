@@ -1,6 +1,6 @@
 import { ExposeApiProperty, PaginatedParams } from '@metapic/nestjs-utils'
 
-import { Breed, Cat } from './cat.entity'
+import { Breed, Cat } from '@/cat.entity'
 
 export class GetCatsParams extends PaginatedParams {
   @ExposeApiProperty({

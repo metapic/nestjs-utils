@@ -19,5 +19,6 @@ export default defineConfig({
   },
   rules: {
     '@typescript-eslint/no-inferrable-types': 'off',
+    'import/no-relative-parent-imports': 'off',
   },
 })

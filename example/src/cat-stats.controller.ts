@@ -5,11 +5,12 @@ import {
   toPaginatedProjectionResponse,
 } from '@metapic/nestjs-utils'
 import { Controller, Get, Query } from '@nestjs/common'
+import { ApiOkResponse } from '@nestjs/swagger'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
-import { BreedCountDto } from './cat.dto'
-import { Cat } from './cat.entity'
+import { BreedCountDto } from '@/cat.dto'
+import { Cat } from '@/cat.entity'
 
 @Controller('cat-stats')
 export class CatStatsController {
@@ -34,5 +35,11 @@ export class CatStatsController {
       (item) => BreedCountDto.fromProjection(item),
       params,
     )
+  }
+
+  @Get('count')
+  @ApiOkResponse({ description: 'The total number of cats' })
+  async getCount(): Promise<{ count: number }> {
+    return { count: await this.repository.count() }
   }
 }
