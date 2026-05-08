@@ -1,6 +1,6 @@
 services:
   app:
-    image: mcr.microsoft.com/devcontainers/typescript-node:24-bookworm
+    image: mcr.microsoft.com/devcontainers/typescript-node:24
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
     volumes:

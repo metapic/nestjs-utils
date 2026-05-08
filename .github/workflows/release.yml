@@ -43,12 +43,16 @@ jobs:
         with:
           node-version: lts/*
           registry-url: https://registry.npmjs.org
+          cache: npm
 
       - name: Install dependencies
         run: npm clean-install
 
       - name: Lint
         run: npm run lint
+
+      - name: Test
+        run: npm run test
 
       - name: Build
         run: npm run build

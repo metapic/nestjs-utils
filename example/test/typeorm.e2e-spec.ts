@@ -1,3 +1,4 @@
+import { createJwt } from '@metapic/nestjs-utils/auth/testing'
 import { UUID_VALUE_TRANSFORMER } from '@metapic/nestjs-utils/typeorm'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { DataSource, IsNull, type Repository } from 'typeorm'
@@ -15,6 +16,9 @@ describe('TypeORM', () => {
     const response = await app.inject({
       method: 'POST',
       url: '/cats',
+      headers: {
+        Authorization: `Bearer ${createJwt(app)}`,
+      },
       body: {
         name: 'Whiskers',
         age: 3,
