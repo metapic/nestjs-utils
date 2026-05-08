@@ -39,9 +39,7 @@ describe('JWT Strategy', () => {
           useApiKey: false,
           userJwtResolver: userResolver,
         }),
-        ConfigModule.forRoot({
-          load: [() => ({ jwt: { secret: 'abcdef' } })],
-        }),
+        ConfigModule.forFeature(() => ({ jwt: { secret: 'abcdef' } })),
       ],
     }).compile()
 

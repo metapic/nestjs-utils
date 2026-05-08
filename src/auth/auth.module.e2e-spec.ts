@@ -90,9 +90,7 @@ describe('Auth module', () => {
         controllers: [TestController],
         providers: [AuthService],
         imports: [
-          ConfigModule.forRoot({
-            load: [() => ({ jwt: { secret: 'abcdef' } })],
-          }),
+          ConfigModule.forFeature(() => ({ jwt: { secret: 'abcdef' } })),
           AuthModule.forRoot<User>({
             useJwt: true,
             useApiKey: true,
@@ -174,9 +172,7 @@ describe('Auth module', () => {
         controllers: [TestController],
         providers: [AuthService],
         imports: [
-          ConfigModule.forRoot({
-            load: [() => ({ jwt: { secret: 'abcdef' } })],
-          }),
+          ConfigModule.forFeature(() => ({ jwt: { secret: 'abcdef' } })),
           AuthModule.forRoot<User>({
             useJwt: true,
             useApiKey: true,

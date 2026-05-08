@@ -11,9 +11,7 @@ import { CatsController } from '@/cats.controller'
 @Module({
   imports: [
     TypeOrmModule.forFeature([Cat]),
-    ConfigModule.forRoot({
-      load: [() => ({ jwt: { secret: 'this-is-not-a-real-secret!' } })],
-    }),
+    ConfigModule.forFeature(() => ({ jwt: { secret: 'this-is-not-a-real-secret!' } })),
     AuthModule.forRoot<User>({
       useJwt: true,
       userJwtResolver: AuthService,
