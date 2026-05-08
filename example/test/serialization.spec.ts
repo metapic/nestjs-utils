@@ -4,16 +4,16 @@ import { describe, expect, it } from 'vitest'
 
 class TestEventPayload {
   @ExposeApiProperty()
-  testId: string
+  testId!: string
 
   @ExposeApiProperty()
-  foo: string
+  foo!: string
 
   @ExposeApiProperty()
-  bar: number
+  bar!: number
 
   @ExposeApiProperty()
-  baz: boolean
+  baz!: boolean
 }
 
 describe('Serialization', () => {
