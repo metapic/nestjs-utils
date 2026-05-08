@@ -32,4 +32,23 @@ describe('Serialization', () => {
       baz: true,
     })
   })
+
+  it('preserves testId when excluding extraneous values and only testId is provided', () => {
+    const data = plainToInstance(
+      TestEventPayload,
+      {
+        testId: 'test-123',
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    )
+    expect(data.testId).toBe('test-123')
+    expect(data).toEqual({
+      testId: 'test-123',
+      foo: undefined,
+      bar: undefined,
+      baz: undefined,
+    })
+  })
 })
