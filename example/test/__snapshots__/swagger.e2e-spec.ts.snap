@@ -109,6 +109,27 @@ exports[`OpenAPI > should generate OpenAPI documentation using snake_case 1`] = 
         ],
         "type": "object",
       },
+      "PageOfBreedCountDto": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BreedCountDto",
+            },
+            "type": "array",
+          },
+          "links": {
+            "$ref": "#/components/schemas/PaginationLinks",
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta",
+          },
+        },
+        "required": [
+          "items",
+          "meta",
+        ],
+        "type": "object",
+      },
       "Paginated": {
         "properties": {
           "items": {
@@ -233,25 +254,7 @@ exports[`OpenAPI > should generate OpenAPI documentation using snake_case 1`] = 
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "items": {
-                      "items": {
-                        "$ref": "#/components/schemas/BreedCountDto",
-                      },
-                      "type": "array",
-                    },
-                    "links": {
-                      "$ref": "#/components/schemas/PaginationLinks",
-                    },
-                    "meta": {
-                      "$ref": "#/components/schemas/PaginationMeta",
-                    },
-                  },
-                  "required": [
-                    "items",
-                    "meta",
-                    "links",
-                  ],
+                  "$ref": "#/components/schemas/PageOfBreedCountDto",
                 },
               },
             },
