@@ -1,7 +1,10 @@
+import { readFileSync } from 'node:fs'
+
 import { CanActivate, DynamicModule, Module, Provider, Type } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { PassportModule } from '@nestjs/passport'
+import { ExtractJwt, WithSecretOrKey } from 'passport-jwt'
 
 import { ApiKeyAuthGuard } from './guards/api-key-auth.guard.js'
 import { AUTH_EXCLUDED_PATHS_TOKEN, AUTH_GUARDS_TOKEN, AuthGuard } from './guards/auth.guard.js'
@@ -51,7 +54,33 @@ export class AuthModule {
     ]
 
     if (finalOptions.useJwt) {
-      providers.push(JwtStrategy<TUser>)
+      providers.push({
+        provide: JwtStrategy<TUser>,
+        useFactory: (configService: ConfigService, resolver: UserJwtResolver<TUser>) => {
+          let secretOrKey: WithSecretOrKey['secretOrKey'] | undefined =
+            configService.get<string>('jwt.secret')
+          const jwkPath = configService.get<string>('jwt.jwkPath')
+          if (jwkPath) {
+            if (secretOrKey) {
+              throw new Error(
+                'Both "jwt.secret" and "jwt.jwkPath" were provided. Make sure only one is set',
+              )
+            }
+            secretOrKey = readFileSync(jwkPath)
+          }
+          if (!secretOrKey) {
+            throw new Error('Neither "jwt.secret" or "jwt.jwkPath" were provided')
+          }
+          return new JwtStrategy<TUser>(resolver, {
+            secretOrKey: secretOrKey,
+            audience: configService.get('auth.jwtAudience'),
+            issuer: configService.get('auth.jwtIssuer'),
+            jwtFromRequest: ExtractJwt.fromExtractors([ExtractJwt.fromAuthHeaderAsBearerToken()]),
+            ignoreExpiration: false,
+          })
+        },
+        inject: [ConfigService, USER_JWT_RESOLVER_TOKEN],
+      })
       providers.push(JwtAuthGuard)
 
       if (finalOptions.userJwtResolver) {
