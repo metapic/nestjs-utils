@@ -1,4 +1,4 @@
-import { CatDto } from '@/cat.dto'
+import { CatDto, GetCatsParams } from '@/cat.dto'
 import { Cat } from '@/cat.entity'
 import { CatsController } from '@/cats.controller'
 import { TypedValidationResponse, VALIDATION_PIPE } from '@metapic/nestjs-utils'
@@ -27,7 +27,7 @@ describe('CatsController', () => {
     await app.init()
   })
 
-  it('validates input', async () => {
+  it('validates body', async () => {
     const response = await app.inject({
       method: 'POST',
       url: '/cats',
@@ -52,6 +52,29 @@ describe('CatsController', () => {
         },
         breed: {
           errors: [{ code: 'isNotEmpty', message: 'breed should not be empty' }],
+        },
+      },
+    })
+  })
+
+  it('validates params', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/cats',
+      query: {
+        age_greater_than: 'abced',
+      },
+    })
+    expect.soft(response.statusCode).toBe(422)
+    expect(response.json()).toEqual<TypedValidationResponse<GetCatsParams>>({
+      fieldErrors: {
+        ageGreaterThan: {
+          errors: [
+            {
+              code: 'isNumber',
+              message: 'ageGreaterThan must be a number conforming to the specified constraints',
+            },
+          ],
         },
       },
     })

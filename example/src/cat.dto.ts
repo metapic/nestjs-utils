@@ -8,6 +8,7 @@ export class GetCatsParams extends PaginatedParams {
     description: 'Filter cats with age greater than the specified value',
     required: false,
   })
+  @IsNumber()
   ageGreaterThan?: number
 
   @ExposeApiProperty({
