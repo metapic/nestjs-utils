@@ -11,13 +11,13 @@ type ErrorInstance = {
   message: string
 }
 
-function transformPropertyName(property: string, target: object | undefined): string {
+function transformPropertyName(property: string): string {
   return snakeCase(property)
 }
 
 export function reduceErrors(errors: ValidationError[]): Record<string, ValidationResponse> {
   return errors.reduce<Record<string, ValidationResponse>>((accum, current) => {
-    const exposedPropertyName = transformPropertyName(current.property, current.target)
+    const exposedPropertyName = transformPropertyName(current.property)
     const fieldErrors = accum[exposedPropertyName] ?? {}
     if (current.constraints) {
       fieldErrors.errors = [
