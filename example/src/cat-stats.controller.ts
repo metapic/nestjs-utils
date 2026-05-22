@@ -1,10 +1,11 @@
 import {
-  ApiPaginatedResponse,
+  pageOf,
   Paginated,
   PaginatedParams,
   toPaginatedProjectionResponse,
 } from '@metapic/nestjs-utils'
 import { Controller, Get, Query } from '@nestjs/common'
+import { ApiOkResponse } from '@nestjs/swagger'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
@@ -19,7 +20,7 @@ export class CatStatsController {
   ) {}
 
   @Get('breeds')
-  @ApiPaginatedResponse({ type: BreedCountDto })
+  @ApiOkResponse({ type: pageOf(BreedCountDto) })
   async getBreedStats(@Query() params: PaginatedParams): Promise<Paginated<BreedCountDto>> {
     const queryBuilder = this.repository.manager
       .createQueryBuilder<{ breed: string; count: string }>(Cat, 'cat')

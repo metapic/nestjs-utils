@@ -1,11 +1,5 @@
-import { applyDecorators, type Type } from '@nestjs/common'
-import {
-  ApiExtraModels,
-  ApiProperty,
-  ApiResponse,
-  ApiResponseNoStatusOptions,
-  getSchemaPath,
-} from '@nestjs/swagger'
+import { mixin } from '@nestjs/common'
+import { ApiProperty, ApiSchema } from '@nestjs/swagger'
 import { IsOptional, Max, Min } from 'class-validator'
 import {
   type IPaginationLinks,
@@ -72,28 +66,13 @@ export async function toPaginatedResponse<Dto, Entity extends ObjectLiteral>(
   )
 }
 
-export const ApiPaginatedResponse = (
-  options: ApiResponseNoStatusOptions & { type: Type<unknown> },
-): PropertyDecorator => {
-  const { type, ...restOptions } = options
-  return applyDecorators(
-    ApiExtraModels(Paginated, type),
-    ApiResponse({
-      status: 200,
-      ...restOptions,
-      schema: {
-        required: ['items', 'meta', 'links'],
-        properties: {
-          items: {
-            type: 'array',
-            items: { $ref: getSchemaPath(type) },
-          },
-          meta: { $ref: getSchemaPath(PaginationMeta) },
-          links: { $ref: getSchemaPath(PaginationLinks) },
-        },
-      },
-    }),
-  )
+export function pageOf<T>(type: new (...args: [unknown]) => T) {
+  @ApiSchema({ name: `PageOf${type.name}` })
+  class PageOf extends Paginated<T> {
+    @ExposeApiProperty({ type: [type] })
+    declare items: T[]
+  }
+  return mixin(PageOf)
 }
 
 export class PaginationMeta implements IPaginationMeta {
