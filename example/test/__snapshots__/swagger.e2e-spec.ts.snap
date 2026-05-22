@@ -130,11 +130,11 @@ exports[`OpenAPI > should generate OpenAPI documentation using snake_case 1`] = 
         ],
         "type": "object",
       },
-      "Paginated": {
+      "PageOfCatDto": {
         "properties": {
           "items": {
             "items": {
-              "type": "string",
+              "$ref": "#/components/schemas/CatDto",
             },
             "type": "array",
           },
@@ -322,25 +322,7 @@ exports[`OpenAPI > should generate OpenAPI documentation using snake_case 1`] = 
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "items": {
-                      "items": {
-                        "$ref": "#/components/schemas/CatDto",
-                      },
-                      "type": "array",
-                    },
-                    "links": {
-                      "$ref": "#/components/schemas/PaginationLinks",
-                    },
-                    "meta": {
-                      "$ref": "#/components/schemas/PaginationMeta",
-                    },
-                  },
-                  "required": [
-                    "items",
-                    "meta",
-                    "links",
-                  ],
+                  "$ref": "#/components/schemas/PageOfCatDto",
                 },
               },
             },
