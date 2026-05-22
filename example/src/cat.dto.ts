@@ -1,5 +1,6 @@
 import { ExposeApiProperty, PaginatedParams } from '@metapic/nestjs-utils'
 
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator'
 import { Breed, Cat } from './cat.entity'
 
 export class GetCatsParams extends PaginatedParams {
@@ -24,15 +25,21 @@ export class GetCatsParams extends PaginatedParams {
 
 export class CreateCatRequest {
   @ExposeApiProperty()
+  @IsNotEmpty()
+  @IsString()
   name!: string
 
   @ExposeApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
   age!: number
 
   @ExposeApiProperty({ enum: Breed })
+  @IsNotEmpty()
   breed!: Breed
 
   @ExposeApiProperty({ required: false, default: false })
+  @IsBoolean()
   isVaccinated?: boolean = false
 
   @ExposeApiProperty()

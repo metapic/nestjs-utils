@@ -1,5 +1,12 @@
-import { ClassSerializerInterceptor, HttpStatus, ValidationPipe } from '@nestjs/common'
+import {
+  ClassSerializerInterceptor,
+  HttpStatus,
+  UnprocessableEntityException,
+  ValidationPipe,
+} from '@nestjs/common'
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core'
+
+import { reduceErrors } from './validation.js'
 
 export const SERIALIZATION_INTERCEPTOR = {
   provide: APP_INTERCEPTOR,
@@ -12,5 +19,7 @@ export const VALIDATION_PIPE = {
     transform: true,
     transformOptions: { enableImplicitConversion: true },
     errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+    exceptionFactory: (errors) =>
+      new UnprocessableEntityException({ fieldErrors: reduceErrors(errors) }),
   }),
 }
