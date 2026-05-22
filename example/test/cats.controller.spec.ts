@@ -1,11 +1,11 @@
-import { CatDto, GetCatsParams } from '@/cat.dto'
-import { Cat } from '@/cat.entity'
-import { CatsController } from '@/cats.controller'
-import { TypedValidationResponse, VALIDATION_PIPE } from '@metapic/nestjs-utils'
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify'
+import { VALIDATION_PIPE } from '@metapic/nestjs-utils'
+import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import { Test } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { Cat } from '@/cat.entity'
+import { CatsController } from '@/cats.controller'
 
 describe('CatsController', () => {
   let app: NestFastifyApplication
@@ -36,8 +36,8 @@ describe('CatsController', () => {
       },
     })
     expect.soft(response.statusCode).toBe(422)
-    expect(response.json()).toEqual<TypedValidationResponse<CatDto>>({
-      fieldErrors: {
+    expect(response.json()).toEqual({
+      field_errors: {
         age: {
           errors: [
             {
@@ -66,13 +66,13 @@ describe('CatsController', () => {
       },
     })
     expect.soft(response.statusCode).toBe(422)
-    expect(response.json()).toEqual<TypedValidationResponse<GetCatsParams>>({
-      fieldErrors: {
-        ageGreaterThan: {
+    expect(response.json()).toEqual({
+      field_errors: {
+        age_greater_than: {
           errors: [
             {
               code: 'isNumber',
-              message: 'ageGreaterThan must be a number conforming to the specified constraints',
+              message: 'must be a number',
             },
           ],
         },

@@ -1,8 +1,9 @@
+import { snakeCase } from 'change-case'
 import { type ValidationError } from 'class-validator'
 
 export type ValidationResponse = {
   errors?: ErrorInstance[]
-  fieldErrors?: Record<string, ValidationResponse>
+  field_errors?: Record<string, ValidationResponse>
 }
 
 type ErrorInstance = {
@@ -10,16 +11,14 @@ type ErrorInstance = {
   message: string
 }
 
-export type TypedValidationResponse<T> = T extends object
-  ? {
-      errors?: ErrorInstance[]
-      fieldErrors?: { [p in keyof T]+?: TypedValidationResponse<T[p]> }
-    }
-  : { errors?: ErrorInstance[] }
+function transformPropertyName(property: string, target: object | undefined): string {
+  return snakeCase(property)
+}
 
 export function reduceErrors(errors: ValidationError[]): Record<string, ValidationResponse> {
   return errors.reduce<Record<string, ValidationResponse>>((accum, current) => {
-    const fieldErrors = accum[current.property] ?? {}
+    const exposedPropertyName = transformPropertyName(current.property, current.target)
+    const fieldErrors = accum[exposedPropertyName] ?? {}
     if (current.constraints) {
       fieldErrors.errors = [
         ...(fieldErrors.errors ?? []),
@@ -30,11 +29,11 @@ export function reduceErrors(errors: ValidationError[]): Record<string, Validati
       ]
     }
     if (current.children?.length) {
-      fieldErrors.fieldErrors = reduceErrors(current.children)
+      fieldErrors.field_errors = reduceErrors(current.children)
     }
     return {
       ...accum,
-      [current.property]: fieldErrors,
+      [exposedPropertyName]: fieldErrors,
     }
   }, {})
 }

@@ -19,7 +19,8 @@ export const VALIDATION_PIPE = {
     transform: true,
     transformOptions: { enableImplicitConversion: true },
     errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+    validationError: { target: true },
     exceptionFactory: (errors) =>
-      new UnprocessableEntityException({ fieldErrors: reduceErrors(errors) }),
+      new UnprocessableEntityException({ field_errors: reduceErrors(errors) }),
   }),
 }
