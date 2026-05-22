@@ -167,7 +167,7 @@ describe('Serialization', () => {
         url: '/cats',
         query: { page: '1', limit: '1' },
       })
-      expect(pageOneResponse.statusCode).toBe(200)
+      expect.soft(pageOneResponse.statusCode).toBe(200)
       expect(pageOneResponse.json()).toEqual({
         items: [
           {
