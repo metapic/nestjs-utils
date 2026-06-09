@@ -66,7 +66,8 @@ export async function toPaginatedResponse<Dto, Entity extends ObjectLiteral>(
   )
 }
 
-export function pageOf<T>(type: new (...args: [unknown]) => T) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function pageOf<T>(type: new (...args: any[]) => T) {
   @ApiSchema({ name: `PageOf${type.name}` })
   class PageOf extends Paginated<T> {
     @ExposeApiProperty({ type: [type] })
