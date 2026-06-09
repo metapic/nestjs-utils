@@ -1,4 +1,4 @@
-import { ApiPaginatedResponse, Paginated, toPaginatedResponse } from '@metapic/nestjs-utils'
+import { pageOf, Paginated, toPaginatedResponse } from '@metapic/nestjs-utils'
 import { Public } from '@metapic/nestjs-utils/auth'
 import { Body, Controller, Get, Param, Post, Query, SerializeOptions } from '@nestjs/common'
 import { ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse } from '@nestjs/swagger'
@@ -18,7 +18,7 @@ export class CatsController {
 
   @Public()
   @Get()
-  @ApiPaginatedResponse({ type: CatDto })
+  @ApiOkResponse({ type: pageOf(CatDto) })
   async getCats(@Query() params: GetCatsParams): Promise<Paginated<CatDto>> {
     return await toPaginatedResponse((item) => CatDto.fromEntity(item), this.repository, params, {
       where: {
