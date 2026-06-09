@@ -20,14 +20,20 @@ describe('AuthModule.forRoot', () => {
   })
 
   describe('JWT', () => {
-    it('includes JwtStrategy in providers when useJwt is true (default)', () => {
+    it('includes a JwtStrategy provider when useJwt is true (default)', () => {
       const module = AuthModule.forRoot()
-      expect(module.providers).toContain(JwtStrategy)
+      const provider = module.providers?.find(
+        (p) => typeof p === 'object' && 'provide' in p && p.provide === JwtStrategy,
+      )
+      expect(provider).toBeDefined()
     })
 
-    it('does not include JwtStrategy when useJwt is false', () => {
+    it('does not include a JwtStrategy provider when useJwt is false', () => {
       const module = AuthModule.forRoot({ useJwt: false })
-      expect(module.providers).not.toContain(JwtStrategy)
+      const provider = module.providers?.find(
+        (p) => typeof p === 'object' && 'provide' in p && p.provide === JwtStrategy,
+      )
+      expect(provider).toBeUndefined()
     })
 
     it('registers the userJwtResolver using useValue when an instance is provided', () => {

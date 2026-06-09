@@ -54,33 +54,7 @@ export class AuthModule {
     ]
 
     if (finalOptions.useJwt) {
-      providers.push({
-        provide: JwtStrategy<TUser>,
-        useFactory: (configService: ConfigService, resolver: UserJwtResolver<TUser>) => {
-          let secretOrKey: WithSecretOrKey['secretOrKey'] | undefined =
-            configService.get<string>('jwt.secret')
-          const jwkPath = configService.get<string>('jwt.jwkPath')
-          if (jwkPath) {
-            if (secretOrKey) {
-              throw new Error(
-                'Both "jwt.secret" and "jwt.jwkPath" were provided. Make sure only one is set',
-              )
-            }
-            secretOrKey = readFileSync(jwkPath)
-          }
-          if (!secretOrKey) {
-            throw new Error('Neither "jwt.secret" or "jwt.jwkPath" were provided')
-          }
-          return new JwtStrategy<TUser>(resolver, {
-            secretOrKey: secretOrKey,
-            audience: configService.get('auth.jwtAudience'),
-            issuer: configService.get('auth.jwtIssuer'),
-            jwtFromRequest: ExtractJwt.fromExtractors([ExtractJwt.fromAuthHeaderAsBearerToken()]),
-            ignoreExpiration: false,
-          })
-        },
-        inject: [ConfigService, USER_JWT_RESOLVER_TOKEN],
-      })
+      providers.push(JwtStrategyProvider<TUser>())
       providers.push(JwtAuthGuard)
 
       if (finalOptions.userJwtResolver) {
@@ -137,3 +111,31 @@ export class AuthModule {
     }
   }
 }
+
+const JwtStrategyProvider = <TUser>(): Provider<JwtStrategy<TUser>> => ({
+  provide: JwtStrategy<TUser>,
+  useFactory: (configService: ConfigService, resolver: UserJwtResolver<TUser>) => {
+    let secretOrKey: WithSecretOrKey['secretOrKey'] | undefined =
+      configService.get<string>('jwt.secret')
+    const jwkPath = configService.get<string>('jwt.jwkPath')
+    if (jwkPath) {
+      if (secretOrKey) {
+        throw new Error(
+          'Both "jwt.secret" and "jwt.jwkPath" were provided. Make sure only one is set',
+        )
+      }
+      secretOrKey = readFileSync(jwkPath)
+    }
+    if (!secretOrKey) {
+      throw new Error('Neither "jwt.secret" or "jwt.jwkPath" were provided')
+    }
+    return new JwtStrategy<TUser>(resolver, {
+      secretOrKey: secretOrKey,
+      audience: configService.get('auth.jwtAudience'),
+      issuer: configService.get('auth.jwtIssuer'),
+      jwtFromRequest: ExtractJwt.fromExtractors([ExtractJwt.fromAuthHeaderAsBearerToken()]),
+      ignoreExpiration: false,
+    })
+  },
+  inject: [ConfigService, USER_JWT_RESOLVER_TOKEN],
+})
