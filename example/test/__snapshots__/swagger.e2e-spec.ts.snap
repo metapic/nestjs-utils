@@ -266,6 +266,20 @@ exports[`OpenAPI > should generate OpenAPI documentation using snake_case 1`] = 
         ],
       },
     },
+    "/cat-stats/count": {
+      "get": {
+        "operationId": "GetCount",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The total number of cats",
+          },
+        },
+        "tags": [
+          "CatStats",
+        ],
+      },
+    },
     "/cats": {
       "get": {
         "operationId": "GetCats",

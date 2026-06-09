@@ -1,4 +1,6 @@
+import { createRequestAgent } from '@metapic/nestjs-utils/auth/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
+import type { Response } from 'supertest'
 import { type Repository } from 'typeorm'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
@@ -18,7 +20,7 @@ describe('Serialization', () => {
     await module.get<Repository<Cat>>(getRepositoryToken(Cat)).deleteAll()
   })
 
-  let createResponses: Awaited<ReturnType<typeof app.inject>>[]
+  let createResponses: Response[]
   let catIds: {
     whiskers: string
     fluffy: string
@@ -26,50 +28,40 @@ describe('Serialization', () => {
   }
 
   beforeAll(async () => {
+    const agent = createRequestAgent(app)
     createResponses = await Promise.all([
-      app.inject({
-        method: 'POST',
-        url: '/cats',
-        body: {
-          name: 'Whiskers',
-          age: 3,
-          breed: 'SIAMESE',
-          is_vaccinated: true,
-          magic_number: 99999,
-        },
+      agent.post('/cats').send({
+        name: 'Whiskers',
+        age: 3,
+        breed: 'SIAMESE',
+        is_vaccinated: true,
+        magic_number: 99999,
       }),
-      app.inject({
-        method: 'POST',
-        url: '/cats',
-        body: {
-          name: 'Fluffy',
-          age: 8,
-          breed: 'BIRMAN',
-          magic_number: 1,
-        },
+      agent.post('/cats').send({
+        name: 'Fluffy',
+        age: 8,
+        breed: 'BIRMAN',
+        magic_number: 1,
       }),
-      app.inject({
-        method: 'POST',
-        url: '/cats',
-        body: {
-          name: 'Blabby',
-          age: 4,
-          breed: 'BIRMAN',
-          magic_number: 1,
-        },
+      agent.post('/cats').send({
+        name: 'Blabby',
+        age: 4,
+        breed: 'BIRMAN',
+        magic_number: 1,
       }),
     ])
 
     catIds = {
-      whiskers: createResponses[0].json<{ id: string }>().id,
-      fluffy: createResponses[1].json<{ id: string }>().id,
-      blabby: createResponses[2].json<{ id: string }>().id,
+      whiskers: (createResponses[0].body as { id: string }).id,
+      fluffy: (createResponses[1].body as { id: string }).id,
+      blabby: (createResponses[2].body as { id: string }).id,
     }
   })
+
   describe('Cats API', () => {
     it('should create a cat with snake_case request and response payloads', () => {
       expect(createResponses[0].statusCode).toBe(201)
-      expect(createResponses[0].json()).toEqual({
+      expect(createResponses[0].body).toEqual({
         id: expect.stringMatching(uuidRegex) as string,
         name: 'Whiskers',
         breed: 'SIAMESE',
@@ -81,12 +73,9 @@ describe('Serialization', () => {
     })
 
     it('should get a cat with snake_case response payload', async () => {
-      const response = await app.inject({
-        method: 'GET',
-        url: `/cats/${catIds.whiskers}`,
-      })
+      const response = await createRequestAgent(app).get(`/cats/${catIds.whiskers}`)
       expect(response.statusCode).toBe(200)
-      expect(response.json()).toEqual({
+      expect(response.body).toEqual({
         id: catIds.whiskers,
         name: 'Whiskers',
         breed: 'siamese',
@@ -98,12 +87,9 @@ describe('Serialization', () => {
     })
 
     it('should get a cat serialized with a different group', async () => {
-      const response = await app.inject({
-        method: 'GET',
-        url: `/cats/${catIds.whiskers}/with-private`,
-      })
+      const response = await createRequestAgent(app).get(`/cats/${catIds.whiskers}/with-private`)
       expect(response.statusCode).toBe(200)
-      expect(response.json()).toEqual({
+      expect(response.body).toEqual({
         id: catIds.whiskers,
         name: 'Whiskers',
         age: 3,
@@ -116,12 +102,9 @@ describe('Serialization', () => {
     })
 
     it('should list cats with snake_case response payload', async () => {
-      const response = await app.inject({
-        method: 'GET',
-        url: '/cats',
-      })
+      const response = await createRequestAgent(app).get('/cats')
       expect(response.statusCode).toBe(200)
-      expect(response.json()).toEqual({
+      expect(response.body).toEqual({
         items: [
           {
             id: catIds.fluffy,
@@ -162,13 +145,11 @@ describe('Serialization', () => {
     })
 
     it('should respect pagination params', async () => {
-      const pageOneResponse = await app.inject({
-        method: 'GET',
-        url: '/cats',
-        query: { page: '1', limit: '1' },
-      })
+      const pageOneResponse = await createRequestAgent(app)
+        .get('/cats')
+        .query({ page: '1', limit: '1' })
       expect(pageOneResponse.statusCode).toBe(200)
-      expect(pageOneResponse.json()).toEqual({
+      expect(pageOneResponse.body).toEqual({
         items: [
           {
             id: catIds.fluffy,
@@ -189,13 +170,11 @@ describe('Serialization', () => {
         },
       })
 
-      const pageTwoResponse = await app.inject({
-        method: 'GET',
-        url: '/cats',
-        query: { page: '2', limit: '1' },
-      })
+      const pageTwoResponse = await createRequestAgent(app)
+        .get('/cats')
+        .query({ page: '2', limit: '1' })
       expect(pageTwoResponse.statusCode).toBe(200)
-      expect(pageTwoResponse.json()).toEqual({
+      expect(pageTwoResponse.body).toEqual({
         items: [
           {
             id: catIds.blabby,
@@ -215,13 +194,10 @@ describe('Serialization', () => {
           total_pages: 3,
         },
       })
-      const pageThree = await app.inject({
-        method: 'GET',
-        url: '/cats',
-        query: { page: '3', limit: '1' },
-      })
+
+      const pageThree = await createRequestAgent(app).get('/cats').query({ page: '3', limit: '1' })
       expect(pageThree.statusCode).toBe(200)
-      expect(pageThree.json()).toEqual({
+      expect(pageThree.body).toEqual({
         items: [
           {
             id: catIds.whiskers,
@@ -244,13 +220,9 @@ describe('Serialization', () => {
     })
 
     it('should respect filter params', async () => {
-      const response = await app.inject({
-        method: 'GET',
-        url: '/cats',
-        query: { age_greater_than: '5' },
-      })
+      const response = await createRequestAgent(app).get('/cats').query({ age_greater_than: '5' })
       expect(response.statusCode).toBe(200)
-      expect(response.json()).toEqual({
+      expect(response.body).toEqual({
         items: [
           {
             id: catIds.fluffy,
@@ -275,12 +247,9 @@ describe('Serialization', () => {
 
   describe('Cat Stats API', () => {
     it('should return breed counts ordered by count descending', async () => {
-      const response = await app.inject({
-        method: 'GET',
-        url: '/cat-stats/breeds',
-      })
+      const response = await createRequestAgent(app).get('/cat-stats/breeds')
       expect(response.statusCode).toBe(200)
-      expect(response.json()).toEqual({
+      expect(response.body).toEqual({
         items: [
           {
             breed: 'birman',
@@ -302,13 +271,11 @@ describe('Serialization', () => {
     })
 
     it('should respect pagination params on breed stats', async () => {
-      const response = await app.inject({
-        method: 'GET',
-        url: '/cat-stats/breeds',
-        query: { page: '1', limit: '1' },
-      })
+      const response = await createRequestAgent(app)
+        .get('/cat-stats/breeds')
+        .query({ page: '1', limit: '1' })
       expect(response.statusCode).toBe(200)
-      expect(response.json()).toEqual({
+      expect(response.body).toEqual({
         items: [
           {
             breed: 'birman',
