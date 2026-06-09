@@ -73,11 +73,11 @@ const validUserId = '123456789'
 
 class AuthService implements UserApiKeyResolver<User>, UserJwtResolver<User> {
   findUserByApiKey(token: string) {
-    return token === apiKey ? new User(validUserId) : null
+    return Promise.resolve(token === apiKey ? new User(validUserId) : null)
   }
 
   findUserByJwt(payload: Record<string, unknown>) {
-    return payload.user_id == validUserId ? new User(validUserId) : null
+    return Promise.resolve(payload.user_id == validUserId ? new User(validUserId) : null)
   }
 }
 

@@ -5,7 +5,7 @@ export class User {
 }
 
 export class AuthService implements UserJwtResolver<User> {
-  findUserByJwt(payload: Record<string, unknown>): User {
-    return new User(String(payload.sub))
+  findUserByJwt(payload: Record<string, unknown>): Promise<User | null> {
+    return Promise.resolve(new User(String(payload.sub)))
   }
 }

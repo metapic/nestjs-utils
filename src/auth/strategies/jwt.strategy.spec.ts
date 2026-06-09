@@ -20,7 +20,7 @@ describe('JwtStrategy', () => {
     const user = { id: '1' }
     const userResolver: UserJwtResolver<typeof user> = {
       findUserByJwt(payload: Record<string, unknown>) {
-        return payload.sub === 'abcdef' ? user : null
+        return Promise.resolve(payload.sub === 'abcdef' ? user : null)
       },
     }
 
@@ -30,12 +30,12 @@ describe('JwtStrategy', () => {
       strategy = new JwtStrategy<typeof user>(userResolver, defaultOptions)
     })
 
-    it('returns the user when the resolver finds one', () => {
-      expect(strategy.validate({ sub: 'abcdef', iat: 1000 })).toBe(user)
+    it('returns the user when the resolver finds one', async () => {
+      expect(await strategy.validate({ sub: 'abcdef', iat: 1000 })).toBe(user)
     })
 
-    it('returns null when the resolver returns null', () => {
-      expect(strategy.validate({ sub: '42' })).toBeNull()
+    it('returns null when the resolver returns null', async () => {
+      expect(await strategy.validate({ sub: '42' })).toBeNull()
     })
   })
 })
