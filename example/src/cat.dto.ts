@@ -69,16 +69,34 @@ export class CatDto {
   })
   correctName = 'Garfield'
 
+  constructor(
+    id: string,
+    name: string,
+    age: number | undefined,
+    breed: Breed,
+    isVaccinated: boolean,
+    magicNumber: number,
+    createdAt: Date,
+  ) {
+    this.id = id
+    this.name = name
+    this.age = age
+    this.breed = breed
+    this.isVaccinated = isVaccinated
+    this.magicNumber = magicNumber
+    this.createdAt = createdAt
+  }
+
   static fromEntity(cat: Cat): CatDto {
-    const dto = new CatDto()
-    dto.id = cat.id
-    dto.name = cat.name
-    dto.age = cat.age
-    dto.breed = cat.breed
-    dto.isVaccinated = cat.isVaccinated
-    dto.magicNumber = cat.magicNumber
-    dto.createdAt = cat.createdAt
-    return dto
+    return new CatDto(
+      cat.id,
+      cat.name,
+      cat.age,
+      cat.breed,
+      cat.isVaccinated,
+      cat.magicNumber,
+      cat.createdAt,
+    )
   }
 }
 
