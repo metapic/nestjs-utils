@@ -6,7 +6,7 @@ describe('ApiKeyStrategy', () => {
   const user = { id: '1' }
   const userResolver: UserApiKeyResolver<typeof user> = {
     findUserByApiKey(token: string) {
-      return token === 'abcdef' ? user : null
+      return Promise.resolve(token === 'abcdef' ? user : null)
     },
   }
 
@@ -16,11 +16,11 @@ describe('ApiKeyStrategy', () => {
     strategy = new ApiKeyStrategy<typeof user>(userResolver)
   })
 
-  it('returns the user when the resolver finds one', () => {
-    expect(strategy.validate('abcdef')).toEqual(user)
+  it('returns the user when the resolver finds one', async () => {
+    expect(await strategy.validate('abcdef')).toEqual(user)
   })
 
-  it('returns null when the resolver returns null', () => {
-    expect(strategy.validate('invalid')).toBeNull()
+  it('returns null when the resolver returns null', async () => {
+    expect(await strategy.validate('invalid')).toBeNull()
   })
 })

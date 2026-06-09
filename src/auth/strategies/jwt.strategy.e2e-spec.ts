@@ -26,7 +26,7 @@ describe('JWT Strategy', () => {
 
   const userResolver: UserJwtResolver<User> = {
     findUserByJwt(payload: Record<string, unknown>) {
-      return new User(String(payload.sub))
+      return Promise.resolve(new User(String(payload.sub)))
     },
   }
 

@@ -24,7 +24,7 @@ describe('ApiKey Strategy', () => {
 
   const userResolver: UserApiKeyResolver<User> = {
     findUserByApiKey(token: string) {
-      return token === 'abcdef' ? new User('asdf') : null
+      return Promise.resolve(token === 'abcdef' ? new User('asdf') : null)
     },
   }
 

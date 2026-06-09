@@ -6,7 +6,7 @@ export const USER_API_KEY_RESOLVER_TOKEN = Symbol('USER_API_KEY_RESOLVER')
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export interface UserApiKeyResolver<TUser> {
-  findUserByApiKey(token: string): TUser | null
+  findUserByApiKey(token: string): Promise<TUser | null>
 }
 
 export class ApiKeyStrategy<TUser> extends PassportStrategy(Strategy, 'apiKey') {
@@ -16,7 +16,7 @@ export class ApiKeyStrategy<TUser> extends PassportStrategy(Strategy, 'apiKey') 
     super()
   }
 
-  validate(token: string): TUser | null {
+  async validate(token: string): Promise<TUser | null> {
     return this.resolver.findUserByApiKey(token)
   }
 }
