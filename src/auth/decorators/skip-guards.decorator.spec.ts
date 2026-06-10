@@ -28,6 +28,7 @@ describe('SkipGuards decorator', () => {
       SKIP_GUARDS_TOKEN,
       TestController.prototype.route,
     ) as (typeof GuardA)[]
+
     expect(metadata).toEqual([GuardA])
   })
 
@@ -43,6 +44,7 @@ describe('SkipGuards decorator', () => {
       | typeof GuardA
       | typeof GuardB
     )[]
+
     expect(metadata).toEqual([GuardA, GuardB])
   })
 
@@ -51,6 +53,7 @@ describe('SkipGuards decorator', () => {
     class TestController {}
 
     const metadata = Reflect.getMetadata(SKIP_GUARDS_TOKEN, TestController) as (typeof GuardA)[]
+
     expect(metadata).toEqual([GuardA])
   })
 
@@ -66,6 +69,7 @@ describe('SkipGuards decorator', () => {
       SKIP_GUARDS_TOKEN,
       TestController.prototype.route,
     ) as unknown[]
+
     expect(metadata).toEqual([])
   })
 })

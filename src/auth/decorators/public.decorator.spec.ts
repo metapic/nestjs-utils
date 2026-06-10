@@ -12,6 +12,7 @@ describe('Public decorator', () => {
     }
 
     const metadata = Reflect.getMetadata(IS_PUBLIC_TOKEN, TestController.prototype.route) as boolean
+
     expect(metadata).toBe(true)
   })
 
@@ -20,6 +21,7 @@ describe('Public decorator', () => {
     class TestController {}
 
     const metadata = Reflect.getMetadata(IS_PUBLIC_TOKEN, TestController) as boolean
+
     expect(metadata).toBe(true)
   })
 })

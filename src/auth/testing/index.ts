@@ -22,20 +22,15 @@ export const createJwt = (
   extraPayload: Record<string, unknown> = {},
 ): string => {
   const config = app.get(ConfigService)
-  const key = config.get<string>('jwt.secret')
-  if (!key) {
-    throw new Error('JWT secret is required for tests. Please set JWT_SECRET environment variable.')
-  }
-
   return jwt.sign(
     {
       sub: randomUUID().toString(),
-      iss: config.get<string>('jwt.issuer'),
-      aud: config.get<string>('jwt.audience'),
+      iss: config.getOrThrow<string>('auth.jwtIssuer'),
+      aud: config.getOrThrow<string>('auth.jwtAudience'),
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 3600,
       ...extraPayload,
     },
-    key,
+    config.getOrThrow<string>('auth.jwtSecret'),
   )
 }

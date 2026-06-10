@@ -39,7 +39,9 @@ describe('JWT Strategy', () => {
           useApiKey: false,
           userJwtResolver: userResolver,
         }),
-        ConfigModule.forFeature(() => ({ jwt: { secret: 'abcdef' } })),
+        ConfigModule.forFeature(() => ({
+          auth: { jwtSecret: 'abcdef', jwtIssuer: 'test', jwtAudience: 'test' },
+        })),
       ],
     }).compile()
 
@@ -57,6 +59,7 @@ describe('JWT Strategy', () => {
       method: 'GET',
       url: '/foo',
     })
+
     expect(result.statusCode).toEqual(401)
   })
 
@@ -68,6 +71,7 @@ describe('JWT Strategy', () => {
         authorization: 'bearer 1234',
       },
     })
+
     expect(result.statusCode).toEqual(401)
   })
 
@@ -80,6 +84,7 @@ describe('JWT Strategy', () => {
         authorization: `bearer ${token}`,
       },
     })
+
     expect(result.statusCode).toEqual(200)
   })
 
@@ -94,6 +99,7 @@ describe('JWT Strategy', () => {
         authorization: `bearer ${token}`,
       },
     })
+
     expect(result.statusCode).toEqual(401)
   })
 })

@@ -31,6 +31,7 @@ const callDecorator = (options: Parameters<typeof CurrentUser>[0], ctx: Executio
 describe('CurrentUser decorator', () => {
   it('returns the user from the request', () => {
     const user = { id: 1, name: 'Alice' }
+
     expect(callDecorator({}, makeContext(user))).toBe(user)
   })
 
