@@ -46,6 +46,7 @@
     ".",
     "example"
   ],
+  "packageManager": "npm@11.16.0",
   "peerDependencies": {
     "@nestjs/common": ">=11",
     "@nestjs/config": ">=4",
@@ -61,27 +62,28 @@
     "passport-jwt": ">=4"
   },
   "devDependencies": {
-    "@metapic/eslint-config": "^1.0.12",
+    "@eslint/js": "^9.39.4",
+    "@metapic/eslint-config": "^1.1.1",
     "@metapic/prettier-config": "^1.0.3",
-    "@nestjs/common": "^11.1.12",
+    "@nestjs/common": "^11.1.26",
     "@nestjs/config": "^4.0.4",
-    "@nestjs/core": "^11.1.12",
-    "@nestjs/platform-fastify": "^11.1.19",
-    "@nestjs/swagger": "^11.2.5",
-    "@nestjs/typeorm": "^11.0.0",
-    "@types/node": "^25.0.10",
+    "@nestjs/core": "^11.1.26",
+    "@nestjs/platform-fastify": "^11.1.26",
+    "@nestjs/swagger": "^11.4.4",
+    "@nestjs/typeorm": "^11.0.1",
+    "@types/node": "^25.9.2",
     "@types/passport-http-bearer": "^1.0.42",
     "@types/passport-jwt": "^4.0.1",
     "change-case": "^5.4.4",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.3",
-    "eslint": "^9.39.2",
-    "globals": "^17.1.0",
-    "jiti": "^2.6.1",
+    "class-validator": "^0.15.1",
+    "eslint": "^9.39.4",
+    "globals": "^17.6.0",
+    "jiti": "^2.7.0",
     "nestjs-typeorm-paginate": "^4.1.0",
-    "prettier": "^3.8.1",
-    "semantic-release": "^25.0.2",
-    "typescript": "^5.9.3"
+    "prettier": "^3.8.4",
+    "semantic-release": "^25.0.5",
+    "typescript": "^6.0.3"
   },
   "release": {
     "branches": [
@@ -100,6 +102,5 @@
         }
       ]
     ]
-  },
-  "packageManager": "npm@11.8.0+sha512.9f5f6c25e5be44629d907a3c482739c614b090a8505057d9685cd273e12c6172e34aa215d2d97bd9a0d8415bb356f7eb6f2b06c1d690b0d2cdcb9f09d7410149"
+  }
 }

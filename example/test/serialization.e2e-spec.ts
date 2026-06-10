@@ -74,6 +74,7 @@ describe('Serialization', () => {
 
     it('should get a cat with snake_case response payload', async () => {
       const response = await createRequestAgent(app).get(`/cats/${catIds.whiskers}`)
+
       expect(response.statusCode).toBe(200)
       expect(response.body).toEqual({
         id: catIds.whiskers,
@@ -88,6 +89,7 @@ describe('Serialization', () => {
 
     it('should get a cat serialized with a different group', async () => {
       const response = await createRequestAgent(app).get(`/cats/${catIds.whiskers}/with-private`)
+
       expect(response.statusCode).toBe(200)
       expect(response.body).toEqual({
         id: catIds.whiskers,
@@ -103,6 +105,7 @@ describe('Serialization', () => {
 
     it('should list cats with snake_case response payload', async () => {
       const response = await createRequestAgent(app).get('/cats')
+
       expect(response.statusCode).toBe(200)
       expect(response.body).toEqual({
         items: [
@@ -148,6 +151,7 @@ describe('Serialization', () => {
       const pageOneResponse = await createRequestAgent(app)
         .get('/cats')
         .query({ page: '1', limit: '1' })
+
       expect(pageOneResponse.statusCode).toBe(200)
       expect(pageOneResponse.body).toEqual({
         items: [
@@ -173,6 +177,7 @@ describe('Serialization', () => {
       const pageTwoResponse = await createRequestAgent(app)
         .get('/cats')
         .query({ page: '2', limit: '1' })
+
       expect(pageTwoResponse.statusCode).toBe(200)
       expect(pageTwoResponse.body).toEqual({
         items: [
@@ -196,6 +201,7 @@ describe('Serialization', () => {
       })
 
       const pageThree = await createRequestAgent(app).get('/cats').query({ page: '3', limit: '1' })
+
       expect(pageThree.statusCode).toBe(200)
       expect(pageThree.body).toEqual({
         items: [
@@ -221,6 +227,7 @@ describe('Serialization', () => {
 
     it('should respect filter params', async () => {
       const response = await createRequestAgent(app).get('/cats').query({ age_greater_than: '5' })
+
       expect(response.statusCode).toBe(200)
       expect(response.body).toEqual({
         items: [
@@ -248,6 +255,7 @@ describe('Serialization', () => {
   describe('Cat Stats API', () => {
     it('should return breed counts ordered by count descending', async () => {
       const response = await createRequestAgent(app).get('/cat-stats/breeds')
+
       expect(response.statusCode).toBe(200)
       expect(response.body).toEqual({
         items: [
@@ -274,6 +282,7 @@ describe('Serialization', () => {
       const response = await createRequestAgent(app)
         .get('/cat-stats/breeds')
         .query({ page: '1', limit: '1' })
+
       expect(response.statusCode).toBe(200)
       expect(response.body).toEqual({
         items: [

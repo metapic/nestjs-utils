@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 
-import { CanActivate, DynamicModule, Module, Provider, Type } from '@nestjs/common'
+import { CanActivate, DynamicModule, Module, ModuleMetadata, Provider, Type } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { PassportModule } from '@nestjs/passport'
@@ -23,6 +23,7 @@ type AuthModuleOptions<TUser> = {
   excludedPaths?: string[]
   userJwtResolver?: UserJwtResolver<TUser> | Type<UserJwtResolver<TUser>>
   userApiKeyResolver?: UserApiKeyResolver<TUser> | Type<UserApiKeyResolver<TUser>>
+  extraProviders?: ModuleMetadata['providers']
 }
 
 @Module({
@@ -52,6 +53,8 @@ export class AuthModule {
       { provide: AUTH_GUARDS_TOKEN, useValue: guards },
       { provide: AUTH_EXCLUDED_PATHS_TOKEN, useValue: finalOptions.excludedPaths ?? [] },
     ]
+
+    providers.push(...(finalOptions.extraProviders ?? []))
 
     if (finalOptions.useJwt) {
       providers.push(JwtStrategyProvider<TUser>())
