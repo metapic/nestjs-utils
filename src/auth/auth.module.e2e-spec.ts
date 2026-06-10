@@ -90,7 +90,9 @@ describe('Auth module', () => {
         controllers: [TestController],
         providers: [AuthService],
         imports: [
-          ConfigModule.forFeature(() => ({ jwt: { secret: 'abcdef' } })),
+          ConfigModule.forFeature(() => ({
+            auth: { jwtSecret: 'abcdef', jwtIssuer: 'test', jwtAudience: 'test' },
+          })),
           AuthModule.forRoot<User>({
             useJwt: true,
             useApiKey: true,
@@ -118,6 +120,7 @@ describe('Auth module', () => {
         ['/skip-jwt', 401],
       ])('GET %s => %i', async (path, expectedStatus) => {
         const result = await app.inject({ method: 'GET', url: path })
+
         expect(result.statusCode).toEqual(expectedStatus)
       })
     })
@@ -140,6 +143,7 @@ describe('Auth module', () => {
           url: path,
           headers: { authorization: `bearer ${token}` },
         })
+
         expect(result.statusCode).toEqual(expectedStatus)
       })
     })
@@ -161,6 +165,7 @@ describe('Auth module', () => {
           url: path,
           headers: { authorization: `bearer ${token}` },
         })
+
         expect(result.statusCode).toEqual(expectedStatus)
       })
     })
@@ -172,7 +177,9 @@ describe('Auth module', () => {
         controllers: [TestController],
         providers: [AuthService],
         imports: [
-          ConfigModule.forFeature(() => ({ jwt: { secret: 'abcdef' } })),
+          ConfigModule.forFeature(() => ({
+            auth: { jwtSecret: 'abcdef', jwtIssuer: 'test', jwtAudience: 'test' },
+          })),
           AuthModule.forRoot<User>({
             useJwt: true,
             useApiKey: true,
@@ -199,6 +206,7 @@ describe('Auth module', () => {
         ['/skip-jwt', 200],
       ])('GET %s => %i', async (path, expectedStatus) => {
         const result = await app.inject({ method: 'GET', url: path })
+
         expect(result.statusCode).toEqual(expectedStatus)
       })
     })
@@ -219,6 +227,7 @@ describe('Auth module', () => {
           url: path,
           headers: { authorization: `bearer ${token}` },
         })
+
         expect(result.statusCode).toEqual(expectedStatus)
       })
     })
@@ -238,6 +247,7 @@ describe('Auth module', () => {
           url: path,
           headers: { authorization: `bearer ${token}` },
         })
+
         expect(result.statusCode).toEqual(expectedStatus)
       })
     })

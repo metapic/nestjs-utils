@@ -12,6 +12,7 @@ describe('JwtStrategy', () => {
   describe('constructor', () => {
     it('creates an instance with secretOrKey options', () => {
       const strategy = new JwtStrategy({ findUserByJwt: vi.fn() }, defaultOptions)
+
       expect(strategy).toBeInstanceOf(JwtStrategy)
     })
   })

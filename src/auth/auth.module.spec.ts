@@ -8,6 +8,7 @@ import { JwtStrategy, USER_JWT_RESOLVER_TOKEN } from './strategies/jwt.strategy.
 describe('AuthModule.forRoot', () => {
   it('returns a DynamicModule with AuthModule as the module', () => {
     const module = AuthModule.forRoot()
+
     expect(module.module).toBe(AuthModule)
   })
 
@@ -16,6 +17,7 @@ describe('AuthModule.forRoot', () => {
     const provider = module.providers?.find(
       (p) => typeof p === 'object' && 'provide' in p && p.provide === APP_GUARD,
     )
+
     expect(provider).toBeDefined()
   })
 
@@ -25,6 +27,7 @@ describe('AuthModule.forRoot', () => {
       const provider = module.providers?.find(
         (p) => typeof p === 'object' && 'provide' in p && p.provide === JwtStrategy,
       )
+
       expect(provider).toBeDefined()
     })
 
@@ -33,6 +36,7 @@ describe('AuthModule.forRoot', () => {
       const provider = module.providers?.find(
         (p) => typeof p === 'object' && 'provide' in p && p.provide === JwtStrategy,
       )
+
       expect(provider).toBeUndefined()
     })
 
@@ -42,6 +46,7 @@ describe('AuthModule.forRoot', () => {
       const provider = module.providers?.find(
         (p) => typeof p === 'object' && 'provide' in p && p.provide === USER_JWT_RESOLVER_TOKEN,
       )
+
       expect(provider).toBeDefined()
       expect((provider as { useValue: unknown }).useValue).toBe(resolver)
     })
@@ -54,6 +59,7 @@ describe('AuthModule.forRoot', () => {
       const provider = module.providers?.find(
         (p) => typeof p === 'object' && 'provide' in p && p.provide === USER_JWT_RESOLVER_TOKEN,
       )
+
       expect(provider).toBeDefined()
       expect((provider as { useClass: unknown }).useClass).toBe(ResolverClass)
     })
@@ -63,6 +69,7 @@ describe('AuthModule.forRoot', () => {
       const provider = module.providers?.find(
         (p) => typeof p === 'object' && 'provide' in p && p.provide === USER_JWT_RESOLVER_TOKEN,
       )
+
       expect(provider).toBeUndefined()
     })
   })
@@ -70,11 +77,13 @@ describe('AuthModule.forRoot', () => {
   describe('API key', () => {
     it('includes ApiKeyStrategy in providers when useApiKey is true', () => {
       const module = AuthModule.forRoot({ useApiKey: true })
+
       expect(module.providers).toContain(ApiKeyStrategy)
     })
 
     it('does not include ApiKeyStrategy by default', () => {
       const module = AuthModule.forRoot()
+
       expect(module.providers).not.toContain(ApiKeyStrategy)
     })
 
@@ -84,6 +93,7 @@ describe('AuthModule.forRoot', () => {
       const provider = module.providers?.find(
         (p) => typeof p === 'object' && 'provide' in p && p.provide === USER_API_KEY_RESOLVER_TOKEN,
       )
+
       expect(provider).toBeDefined()
       expect((provider as { useValue: unknown }).useValue).toBe(resolver)
     })
@@ -96,6 +106,7 @@ describe('AuthModule.forRoot', () => {
       const provider = module.providers?.find(
         (p) => typeof p === 'object' && 'provide' in p && p.provide === USER_API_KEY_RESOLVER_TOKEN,
       )
+
       expect(provider).toBeDefined()
       expect((provider as { useClass: unknown }).useClass).toBe(ResolverClass)
     })
@@ -106,6 +117,7 @@ describe('AuthModule.forRoot', () => {
       const provider = module.providers?.find(
         (p) => typeof p === 'object' && 'provide' in p && p.provide === USER_API_KEY_RESOLVER_TOKEN,
       )
+
       expect(provider).toBeUndefined()
     })
   })

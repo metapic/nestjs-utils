@@ -119,19 +119,22 @@ const JwtStrategyProvider = <TUser>(): Provider<JwtStrategy<TUser>> => ({
   provide: JwtStrategy<TUser>,
   useFactory: (configService: ConfigService, resolver: UserJwtResolver<TUser>) => {
     let secretOrKey: WithSecretOrKey['secretOrKey'] | undefined =
-      configService.get<string>('jwt.secret')
-    const jwkPath = configService.get<string>('jwt.jwkPath')
+      configService.get<string>('auth.jwtSecret')
+
+    const jwkPath = configService.get<string>('auth.jwkPath')
     if (jwkPath) {
       if (secretOrKey) {
         throw new Error(
-          'Both "jwt.secret" and "jwt.jwkPath" were provided. Make sure only one is set',
+          'Both "auth.jwtSecret" and "auth.jwkPath" were provided. Make sure only one is set',
         )
       }
       secretOrKey = readFileSync(jwkPath)
     }
+
     if (!secretOrKey) {
-      throw new Error('Neither "jwt.secret" or "jwt.jwkPath" were provided')
+      throw new Error('Neither "auth.jwtSecret" or "auth.jwkPath" were provided')
     }
+
     return new JwtStrategy<TUser>(resolver, {
       secretOrKey: secretOrKey,
       audience: configService.get('auth.jwtAudience'),

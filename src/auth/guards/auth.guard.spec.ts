@@ -43,16 +43,19 @@ describe('AuthGuard', () => {
   describe('excluded paths', () => {
     it('returns true when the request url starts with an excluded path', async () => {
       const guard = new AuthGuard(reflector, [], ['/health'])
+
       expect(await guard.canActivate(makeContext('/health/live'))).toBe(true)
     })
 
     it('returns true for exact excluded path match', async () => {
       const guard = new AuthGuard(reflector, [], ['/metrics'])
+
       expect(await guard.canActivate(makeContext('/metrics'))).toBe(true)
     })
 
     it('does not bypass auth for unrelated paths when exclusions are set', async () => {
       const guard = new AuthGuard(reflector, [], ['/health'])
+
       await expect(guard.canActivate(makeContext('/api/protected'))).rejects.toThrow(
         UnauthorizedException,
       )
@@ -87,6 +90,7 @@ describe('AuthGuard', () => {
 
     it('throws UnauthorizedException when no inner guards are provided', async () => {
       const guard = new AuthGuard(reflector)
+
       await expect(guard.canActivate(makeContext())).rejects.toThrow(UnauthorizedException)
     })
 

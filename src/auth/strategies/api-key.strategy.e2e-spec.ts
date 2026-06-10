@@ -54,6 +54,7 @@ describe('ApiKey Strategy', () => {
       method: 'GET',
       url: '/foo',
     })
+
     expect(result.statusCode).toEqual(401)
   })
 
@@ -65,6 +66,7 @@ describe('ApiKey Strategy', () => {
         authorization: 'bearer 1234',
       },
     })
+
     expect(result.statusCode).toEqual(401)
   })
 
@@ -76,6 +78,7 @@ describe('ApiKey Strategy', () => {
         authorization: 'bearer abcdef',
       },
     })
+
     expect(result.statusCode).toEqual(200)
   })
 })
