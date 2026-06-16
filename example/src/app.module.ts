@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { AuthService, User, UserRepository } from '@/auth'
+import { ApiVersionGuard, AuthService, User, UserRepository } from '@/auth'
 import { CatsModule } from '@/cats.module'
 
 @Module({
@@ -37,6 +37,7 @@ import { CatsModule } from '@/cats.module'
       userJwtResolver: AuthService,
       excludedPaths: ['/cat-stats/breeds'],
       extraProviders: [UserRepository],
+      extraAuthGuards: [ApiVersionGuard],
     }),
     CatsModule,
   ],

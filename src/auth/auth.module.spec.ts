@@ -1,3 +1,4 @@
+import { type ClassProvider, type ExistingProvider } from '@nestjs/common'
 import { APP_GUARD } from '@nestjs/core'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -119,6 +120,76 @@ describe('AuthModule.forRoot', () => {
       )
 
       expect(provider).toBeUndefined()
+    })
+  })
+
+  describe('extraAuthGuards', () => {
+    it('registers a Type guard as APP_GUARD with useClass', () => {
+      class ExtraGuard {
+        canActivate() {
+          return true
+        }
+      }
+      const module = AuthModule.forRoot({ extraAuthGuards: [ExtraGuard] })
+
+      const appGuardProviders = module.providers?.filter(
+        (p) => typeof p === 'object' && 'provide' in p && p.provide === APP_GUARD,
+      )
+      const hasExtraGuardAsAppGuard = appGuardProviders?.some(
+        (p) => (p as ClassProvider).useClass === ExtraGuard,
+      )
+
+      expect(hasExtraGuardAsAppGuard).toBe(true)
+    })
+
+    it('registers a provider-object guard as APP_GUARD overriding its provide token', () => {
+      class ExtraGuard {
+        canActivate() {
+          return true
+        }
+      }
+      const guardProvider = { provide: ExtraGuard, useExisting: ExtraGuard }
+      const module = AuthModule.forRoot({ extraAuthGuards: [guardProvider] })
+
+      const appGuardProviders = module.providers?.filter(
+        (p) => typeof p === 'object' && 'provide' in p && p.provide === APP_GUARD,
+      )
+      const hasExtraGuardAsAppGuard = appGuardProviders?.some(
+        (p) => (p as ExistingProvider).useExisting === ExtraGuard,
+      )
+
+      expect(hasExtraGuardAsAppGuard).toBe(true)
+    })
+
+    it('registers multiple Type guards as APP_GUARD', () => {
+      class GuardA {
+        canActivate() {
+          return true
+        }
+      }
+      class GuardB {
+        canActivate() {
+          return true
+        }
+      }
+      const module = AuthModule.forRoot({ extraAuthGuards: [GuardA, GuardB] })
+
+      const appGuardProviders = module.providers?.filter(
+        (p) => typeof p === 'object' && 'provide' in p && p.provide === APP_GUARD,
+      )
+
+      expect(appGuardProviders?.some((p) => (p as ClassProvider).useClass === GuardA)).toBe(true)
+      expect(appGuardProviders?.some((p) => (p as ClassProvider).useClass === GuardB)).toBe(true)
+    })
+
+    it('does not add extra APP_GUARD entries when extraAuthGuards is not provided', () => {
+      const module = AuthModule.forRoot()
+
+      const appGuardProviders = module.providers?.filter(
+        (p) => typeof p === 'object' && 'provide' in p && p.provide === APP_GUARD,
+      )
+
+      expect(appGuardProviders?.length).toBe(1)
     })
   })
 })

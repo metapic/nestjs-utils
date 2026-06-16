@@ -1,6 +1,17 @@
 import { readFileSync } from 'node:fs'
 
-import { CanActivate, DynamicModule, Module, ModuleMetadata, Provider, Type } from '@nestjs/common'
+import {
+  CanActivate,
+  ClassProvider,
+  DynamicModule,
+  ExistingProvider,
+  FactoryProvider,
+  Module,
+  ModuleMetadata,
+  Provider,
+  Type,
+  ValueProvider,
+} from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { PassportModule } from '@nestjs/passport'
@@ -24,6 +35,13 @@ type AuthModuleOptions<TUser> = {
   userJwtResolver?: UserJwtResolver<TUser> | Type<UserJwtResolver<TUser>>
   userApiKeyResolver?: UserApiKeyResolver<TUser> | Type<UserApiKeyResolver<TUser>>
   extraProviders?: ModuleMetadata['providers']
+  extraAuthGuards?: (
+    | Type
+    | Omit<ClassProvider, 'provide'>
+    | Omit<ValueProvider, 'provide'>
+    | Omit<FactoryProvider, 'provide'>
+    | Omit<ExistingProvider, 'provide'>
+  )[]
 }
 
 @Module({
@@ -105,6 +123,16 @@ export class AuthModule {
       exports.push(ApiKeyStrategy)
       exports.push(ApiKeyAuthGuard)
       exports.push(USER_API_KEY_RESOLVER_TOKEN)
+    }
+
+    if (finalOptions.extraAuthGuards?.length) {
+      for (const guard of finalOptions.extraAuthGuards) {
+        if (typeof guard === 'function') {
+          providers.push({ useClass: guard, provide: APP_GUARD })
+        } else {
+          providers.push({ ...guard, provide: APP_GUARD })
+        }
+      }
     }
 
     return {
