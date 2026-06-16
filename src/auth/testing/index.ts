@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 
 import { type INestApplication } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import request from 'supertest'
 
 export const createRequestAgent = (
