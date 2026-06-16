@@ -1,4 +1,11 @@
-import { Controller, Get, UseGuards } from '@nestjs/common'
+import {
+  CanActivate,
+  Controller,
+  ExecutionContext,
+  Get,
+  Injectable,
+  UseGuards,
+} from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import { Test } from '@nestjs/testing'
@@ -250,6 +257,67 @@ describe('Auth module', () => {
 
         expect(result.statusCode).toEqual(expectedStatus)
       })
+    })
+  })
+
+  describe('with extra auth guards', () => {
+    @Injectable()
+    class ExtraHeaderGuard implements CanActivate {
+      canActivate(context: ExecutionContext): boolean {
+        const request = context.switchToHttp().getRequest<{ headers: Record<string, string> }>()
+        return request.headers['x-extra'] === 'required'
+      }
+    }
+
+    @Controller()
+    class ExtraGuardTestController {
+      @Get('guarded')
+      guarded() {
+        return true
+      }
+    }
+
+    beforeAll(async () => {
+      const module = await Test.createTestingModule({
+        controllers: [ExtraGuardTestController],
+        providers: [AuthService],
+        imports: [
+          ConfigModule.forFeature(() => ({
+            auth: { jwtSecret: 'abcdef', jwtIssuer: 'test', jwtAudience: 'test' },
+          })),
+          AuthModule.forRoot<User>({
+            useJwt: true,
+            userJwtResolver: AuthService,
+            extraAuthGuards: [ExtraHeaderGuard],
+          }),
+        ],
+      }).compile()
+
+      app = module.createNestApplication(new FastifyAdapter())
+      await app.init()
+      await app.getHttpAdapter().getInstance().ready()
+    })
+
+    it('blocks requests missing the extra header even with a valid JWT', async () => {
+      const token = createJwt(app, { user_id: validUserId })
+      const result = await app.inject({
+        method: 'GET',
+        url: '/guarded',
+        headers: { authorization: `bearer ${token}` },
+      })
+
+      expect(result.statusCode).toEqual(403)
+    })
+
+    it('allows requests that satisfy both auth guard and extra header guard', async () => {
+      const token = createJwt(app, { user_id: validUserId })
+      const result = await app.inject({
+        method: 'GET',
+        url: '/guarded',
+        headers: { authorization: `bearer ${token}`, 'x-extra': 'required' },
+      })
+
+      expect(result.statusCode).toEqual(200)
     })
   })
 })
