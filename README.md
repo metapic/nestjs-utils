@@ -28,6 +28,7 @@ export class AppModule {}
 import { ViewColumn, ViewEntity } from '@metapic/nestjs-utils/typeorm'
 import { DataSource } from 'typeorm'
 
+import { Cat } from './cat.entity'
 @ViewEntity({
   // View name defaults to `cat_breed_stats` (snake_case of the class name).
   expression: (dataSource: DataSource) =>
