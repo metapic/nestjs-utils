@@ -9,6 +9,11 @@ import {
 } from 'typeorm'
 import { parse, stringify, validate } from 'uuid'
 
+// TypeORM does not re-export these option interfaces from its barrel, so we
+// derive them from the decorator signatures instead.
+type ViewEntityOptions = NonNullable<Parameters<typeof typeorm.ViewEntity>[1]>
+type ViewColumnOptions = NonNullable<Parameters<typeof typeorm.ViewColumn>[0]>
+
 export const Column = (options?: ColumnOptions) => {
   return (target: object, propertyKey: string | symbol) => {
     typeorm.Column({ name: snakeCase(String(propertyKey)), ...options })(target, propertyKey)
@@ -18,6 +23,30 @@ export const Column = (options?: ColumnOptions) => {
 export const PrimaryColumn = (options?: PrimaryColumnOptions) => {
   return (target: object, propertyKey: string | symbol) => {
     typeorm.PrimaryColumn({ name: snakeCase(String(propertyKey)), ...options })(target, propertyKey)
+  }
+}
+
+/**
+ * Marks a class as a TypeORM view entity, deriving the view name as a snake_case
+ * version of the class name when `name` is not explicitly provided.
+ *
+ * @see typeorm.ViewEntity
+ */
+export const ViewEntity = (options?: ViewEntityOptions): ClassDecorator => {
+  return (target) => {
+    typeorm.ViewEntity({ name: snakeCase(target.name), ...options })(target)
+  }
+}
+
+/**
+ * Marks a class property as a view column, deriving the column name as a
+ * snake_case version of the property key when `name` is not explicitly provided.
+ *
+ * @see typeorm.ViewColumn
+ */
+export const ViewColumn = (options?: ViewColumnOptions) => {
+  return (target: object, propertyKey: string | symbol) => {
+    typeorm.ViewColumn({ name: snakeCase(String(propertyKey)), ...options })(target, propertyKey)
   }
 }
 

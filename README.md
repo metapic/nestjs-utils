@@ -20,6 +20,34 @@ import { SERIALIZATION_INTERCEPTOR, VALIDATION_PIPE } from '@metapic/nestjs-util
 export class AppModule {}
 ```
 
+## TypeORM views
+
+`ViewEntity` and `ViewColumn` (from `@metapic/nestjs-utils/typeorm`) wrap TypeORM's decorators and apply the same snake_case convention as `Column`: the view name is derived from the class name and each column name from its property key, unless you pass an explicit `name`.
+
+```ts
+import { ViewColumn, ViewEntity } from '@metapic/nestjs-utils/typeorm'
+import { DataSource } from 'typeorm'
+
+@ViewEntity({
+  // View name defaults to `cat_breed_stats` (snake_case of the class name).
+  expression: (dataSource: DataSource) =>
+    dataSource
+      .createQueryBuilder()
+      .select('cat.breed', 'breed')
+      .addSelect('COUNT(*)', 'cat_count')
+      .from(Cat, 'cat')
+      .groupBy('cat.breed'),
+})
+export class CatBreedStats {
+  @ViewColumn()
+  breed!: string
+
+  // Column name defaults to `cat_count` (snake_case of the property).
+  @ViewColumn()
+  catCount!: number
+}
+```
+
 ## Testing
 
 All testing runs through the example app’s e2e suite: [example/test](example/test).
