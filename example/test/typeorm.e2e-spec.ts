@@ -124,7 +124,7 @@ describe('TypeORM', () => {
     const dataSource = module.get(DataSource)
 
     const raw = await dataSource.query<{ breed: string; cat_count: number }[]>(
-      'SELECT breed, cat_count FROM cat_breed_stats ORDER BY cat_count DESC',
+      'SELECT breed, cat_count FROM v_cat_breed_stats ORDER BY cat_count DESC',
     )
 
     expect(raw.length).toBeGreaterThan(0)

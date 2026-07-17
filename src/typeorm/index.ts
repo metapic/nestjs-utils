@@ -30,11 +30,19 @@ export const PrimaryColumn = (options?: PrimaryColumnOptions) => {
  * Marks a class as a TypeORM view entity, deriving the view name as a snake_case
  * version of the class name when `name` is not explicitly provided.
  *
+ * The derived name is prefixed with `v_` by default (`CatBreedStats` ->
+ * `v_cat_breed_stats`). Override the prefix via `prefix`, or disable it with
+ * `prefix: ''`. An explicit `name` bypasses both the prefix and the derivation.
+ *
  * @see typeorm.ViewEntity
  */
-export const ViewEntity = (options?: ViewEntityOptions): ClassDecorator => {
+export const ViewEntity = (options?: ViewEntityOptions & { prefix?: string }): ClassDecorator => {
   return (target) => {
-    typeorm.ViewEntity({ name: snakeCase(target.name), ...options })(target)
+    const { prefix = 'v_', ...viewOptions } = options ?? {}
+    typeorm.ViewEntity({
+      name: `${prefix}${snakeCase(target.name)}`,
+      ...viewOptions,
+    })(target)
   }
 }
 

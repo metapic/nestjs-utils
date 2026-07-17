@@ -22,7 +22,7 @@ export class AppModule {}
 
 ## TypeORM views
 
-`ViewEntity` and `ViewColumn` (from `@metapic/nestjs-utils/typeorm`) wrap TypeORM's decorators and apply the same snake_case convention as `Column`: the view name is derived from the class name and each column name from its property key, unless you pass an explicit `name`.
+`ViewEntity` and `ViewColumn` (from `@metapic/nestjs-utils/typeorm`) wrap TypeORM's decorators and apply the same snake_case convention as `Column`: the view name is derived from the class name and each column name from its property key, unless you pass an explicit `name`. The derived view name is prefixed with `v_` by default - override it with `prefix: 'view_'` or disable it with `prefix: ''`.
 
 ```ts
 import { ViewColumn, ViewEntity } from '@metapic/nestjs-utils/typeorm'
@@ -30,7 +30,7 @@ import { DataSource } from 'typeorm'
 
 import { Cat } from './cat.entity'
 @ViewEntity({
-  // View name defaults to `cat_breed_stats` (snake_case of the class name).
+  // View name defaults to `v_cat_breed_stats`
   expression: (dataSource: DataSource) =>
     dataSource
       .createQueryBuilder()

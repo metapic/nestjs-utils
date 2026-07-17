@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm'
 
 import { Cat } from '@/cat.entity'
 
-// View name defaults to `cat_breed_stats` (snake_case of the class name).
+// View name defaults to `v_cat_breed_stats` (snake_case of the class name with the default `v_` prefix.
 @ViewEntity({
   expression: (dataSource: DataSource) =>
     dataSource
