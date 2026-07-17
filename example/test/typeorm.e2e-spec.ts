@@ -7,6 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import { app, module } from './setup'
 
+import { CatBreedStats } from '@/cat-breed-stats.view'
 import { Breed, Cat } from '@/cat.entity'
 
 describe('TypeORM', () => {
@@ -117,5 +118,30 @@ describe('TypeORM', () => {
     expect(stillNull.some((cat) => cat.name === 'Mochi')).toBe(false)
     expect(updated.some((cat) => cat.name === 'Mochi')).toBe(true)
     expect(updated.every((cat) => cat.parentId === parentId)).toBe(true)
+  })
+
+  it('should expose the view via a snake_case view name and columns', async () => {
+    const dataSource = module.get(DataSource)
+
+    const raw = await dataSource.query<{ breed: string; cat_count: number }[]>(
+      'SELECT breed, cat_count FROM v_cat_breed_stats ORDER BY cat_count DESC',
+    )
+
+    expect(raw.length).toBeGreaterThan(0)
+    expect(raw[0]).toHaveProperty('breed')
+    expect(raw[0]).toHaveProperty('cat_count')
+  })
+
+  it('should read the view through its repository with mapped properties', async () => {
+    const repository = module.get<Repository<CatBreedStats>>(getRepositoryToken(CatBreedStats))
+
+    const stats = await repository.find()
+
+    expect(stats.length).toBeGreaterThan(0)
+    for (const row of stats) {
+      expect(typeof row.breed).toBe('string')
+      expect(typeof row.catCount).toBe('number')
+      expect(row.catCount).toBeGreaterThan(0)
+    }
   })
 })
