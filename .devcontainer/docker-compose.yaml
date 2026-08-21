@@ -3,6 +3,8 @@ services:
     image: mcr.microsoft.com/devcontainers/typescript-node:24
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
+    environment:
+      SQS_ENDPOINT: http://sqs:9324
     volumes:
       - node-modules:${containerWorkspaceFolder}/node_modules
       - node-modules-example:${containerWorkspaceFolder}/example/node_modules
@@ -19,6 +21,14 @@ services:
       MYSQL_DATABASE: example
     tmpfs:
       - /var/lib/mysql
+
+  sqs:
+    image: docker.io/softwaremill/elasticmq-native
+    restart: unless-stopped
+    tmpfs:
+      - /data
+    volumes:
+      - ./elasticmq.conf:/opt/elasticmq.conf:ro
 
 volumes:
   node-modules:
