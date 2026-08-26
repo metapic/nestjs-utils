@@ -48,20 +48,24 @@
   ],
   "packageManager": "npm@11.16.0",
   "peerDependencies": {
+    "@aws-sdk/client-sqs": ">=3",
     "@nestjs/common": ">=11",
     "@nestjs/config": ">=4",
     "@nestjs/core": ">=11",
     "@nestjs/passport": ">=11",
     "@nestjs/swagger": ">=11",
     "@nestjs/typeorm": ">=11",
+    "@opentelemetry/api": ">=1",
     "change-case": ">=5",
     "class-transformer": ">=0.5.1",
     "class-validator": ">=0.14.3",
     "nestjs-typeorm-paginate": ">=4",
     "passport-http-bearer": ">=1",
-    "passport-jwt": ">=4"
+    "passport-jwt": ">=4",
+    "sqs-consumer": ">=9"
   },
   "devDependencies": {
+    "@aws-sdk/client-sqs": "^3.1117.0",
     "@eslint/js": "^9.39.4",
     "@metapic/eslint-config": "^1.1.1",
     "@metapic/prettier-config": "^1.0.3",
@@ -71,6 +75,7 @@
     "@nestjs/platform-fastify": "^11.1.26",
     "@nestjs/swagger": "^11.4.4",
     "@nestjs/typeorm": "^11.0.1",
+    "@opentelemetry/api": "^1.9.1",
     "@types/node": "^25.9.2",
     "@types/passport-http-bearer": "^1.0.42",
     "@types/passport-jwt": "^4.0.1",
@@ -83,6 +88,7 @@
     "nestjs-typeorm-paginate": "^4.1.0",
     "prettier": "^3.8.4",
     "semantic-release": "^25.0.5",
+    "sqs-consumer": "^15.0.3",
     "typescript": "^6.0.3"
   },
   "release": {
