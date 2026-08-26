@@ -23,6 +23,10 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
+      sqs:
+        image: softwaremill/elasticmq-native
+        ports:
+          - 9324:9324
     strategy:
       matrix:
         node-version: [22.x, 24.x, 25.x]
@@ -51,6 +55,7 @@ jobs:
       - name: Lint and test example
         env:
           DB_HOST: localhost
+          SQS_ENDPOINT: http://localhost:9324
         run: |
           pushd example
           npm clean-install
