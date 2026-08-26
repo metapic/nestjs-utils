@@ -36,8 +36,6 @@ jobs:
         image: softwaremill/elasticmq-native
         ports:
           - 9324:9324
-        volumes:
-          - ${{ github.workspace }}/.devcontainer/elasticmq.conf:/opt/elasticmq.conf:ro
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -66,6 +64,7 @@ jobs:
       - name: Lint and test example
         env:
           DB_HOST: localhost
+          SQS_ENDPOINT: http://localhost:9324
         run: |
           pushd example
           npm clean-install
