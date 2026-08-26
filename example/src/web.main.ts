@@ -1,5 +1,4 @@
 import { setupSwagger } from '@metapic/nestjs-utils'
-import { runConsumers } from '@metapic/nestjs-utils/sqs'
 import { NestFactory } from '@nestjs/core'
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import { type DocumentBuilder } from '@nestjs/swagger'
@@ -14,8 +13,6 @@ async function bootstrap() {
       .setTitle('@metapic/nestjs-utils example')
       .setDescription('An example Nest.js application for the @metapic/nestjs-utils package.'),
   )
-
-  runConsumers(app)
 
   await app.listen(process.env.PORT ?? 3000, '::')
 }

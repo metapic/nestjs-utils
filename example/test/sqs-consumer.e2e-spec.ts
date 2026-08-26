@@ -76,7 +76,7 @@ describe('SQS consumer (elasticmq)', () => {
 
     handler = app.get(CatChangedHandler)
 
-    // Mirrors main.ts: start the consumers once the app is ready.
+    // Mirrors consumer.ts: start the consumers once the app is ready.
     runConsumers(app)
   })
 
