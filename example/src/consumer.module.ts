@@ -21,6 +21,7 @@ import { ConfigurationModule } from '@/configuration.module'
         return {
           // elasticmq exposes queues at {endpoint}/queue/{name}.
           queues: queues.map((name) => ({ url: `${endpoint}/queue/${name}` })),
+          handlers: [CatChangedHandler],
           endpoint,
           region: 'us-east-1',
           credentials: endpoint ? { accessKeyId: 'local', secretAccessKey: 'local' } : undefined,
@@ -28,6 +29,5 @@ import { ConfigurationModule } from '@/configuration.module'
       },
     }),
   ],
-  providers: [CatChangedHandler],
 })
 export class ConsumerAppModule {}

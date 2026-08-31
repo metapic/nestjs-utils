@@ -1,6 +1,7 @@
 import { type DynamicModule, Module, type Provider } from '@nestjs/common'
 import { DiscoveryModule } from '@nestjs/core'
 
+import { ExplicitHandlerRegistrar } from './explicit-handler-registrar.js'
 import { HandlerRegistryInitializer } from './handler-registry.init.js'
 import { HandlerRegistry } from './handler-registry.js'
 import { SqsConsumerService } from './sqs-consumer.service.js'
@@ -37,7 +38,12 @@ export class SqsModule {
   }
 
   private static coreProviders(): Provider[] {
-    return [HandlerRegistry, HandlerRegistryInitializer, SqsConsumerService]
+    return [
+      HandlerRegistry,
+      HandlerRegistryInitializer,
+      ExplicitHandlerRegistrar,
+      SqsConsumerService,
+    ] as Provider[]
   }
 
   private static coreExports(): (Provider | symbol | string)[] {

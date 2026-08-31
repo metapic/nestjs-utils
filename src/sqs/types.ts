@@ -3,6 +3,8 @@ import { type ModuleMetadata, type Type } from '@nestjs/common'
 import { IsDate, IsObject, IsString } from 'class-validator'
 import { type ConsumerOptions } from 'sqs-consumer'
 
+import { type Handler } from './handler.js'
+
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type Event = {}
 
@@ -60,6 +62,11 @@ export type QueueConfig =
 export type SqsModuleOptions = {
   /** Queues to consume. Each entry is a full URL or a `{ name, prefix?, suffix? }` spec. */
   queues: QueueConfig[]
+  /**
+   * Handler classes to instantiate via `moduleRef.create` and register in the
+   * {@link HandlerRegistry}. Each class must be decorated with `@SqsHandler`.
+   */
+  handlers?: Type<Handler<Event>>[]
   /** Custom endpoint (e.g. elasticmq/localstack). */
   endpoint?: string
   region?: string
