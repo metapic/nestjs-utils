@@ -6,13 +6,17 @@ import { describe, expect, it } from 'vitest'
 
 import { ExplicitHandlerRegistrar } from './explicit-handler-registrar.js'
 import { HandlerRegistry } from './handler-registry.js'
-import { type Handler } from './handler.js'
+import { Handler } from './handler.js'
 import { SqsHandler } from './sqs-handler.decorator.js'
 import { SqsModule } from './sqs.module.js'
 import { type Event } from './types.js'
 
 @SqsHandler('explicit.event')
-class ExplicitTestHandler {
+class ExplicitTestHandler extends Handler<object> {
+  getEventClass(): new () => object {
+    throw new Error('Method not implemented.')
+  }
+
   handle(): Promise<void> {
     return Promise.resolve()
   }
