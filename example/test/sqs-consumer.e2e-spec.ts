@@ -6,7 +6,12 @@ import {
   SendMessageCommand,
   SQSClient,
 } from '@aws-sdk/client-sqs'
-import { runConsumers, type SnsNotification, SqsModule } from '@metapic/nestjs-utils/sqs'
+import {
+  HandlerRegistry,
+  runConsumers,
+  type SnsNotification,
+  SqsModule,
+} from '@metapic/nestjs-utils/sqs'
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import { Test } from '@nestjs/testing'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
@@ -63,18 +68,18 @@ describe('SQS consumer (elasticmq)', () => {
       imports: [
         SqsModule.forRoot({
           queues: [{ url: queueUrl }],
+          handlers: [CatChangedHandler],
           endpoint,
           region: 'us-east-1',
           credentials: { accessKeyId: 'local', secretAccessKey: 'local' },
         }),
       ],
-      providers: [CatChangedHandler],
     }).compile()
 
     app = module.createNestApplication<NestFastifyApplication>(new FastifyAdapter())
     await app.init()
 
-    handler = app.get(CatChangedHandler)
+    handler = app.get(HandlerRegistry).getHandler('cat.changed') as CatChangedHandler
 
     // Mirrors consumer.ts: start the consumers once the app is ready.
     runConsumers(app)
